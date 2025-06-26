@@ -1,0 +1,6 @@
+# requirements.txt
+torch
+torchvision
+scikit-learn
+pandas
+numpy

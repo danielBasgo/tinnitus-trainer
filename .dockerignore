@@ -1,0 +1,36 @@
+# .dockerignore
+
+# Git-Verzeichnis und -Dateien
+.git
+.gitignore
+
+# Docker-Dateien (werden im Image selbst nicht benötigt)
+Dockerfile
+.dockerignore
+
+# Python-spezifische Dinge
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv
+venv/
+env/
+
+# IDE- und Editor-Konfigurationen
+.vscode/
+.idea/
+*.sublime-*
+
+# OS-spezifische Dateien
+.DS_Store
+Thumbs.db
+
+# Output-Verzeichnisse, die vom Skript erstellt werden
+# Das "models"-Verzeichnis soll nicht IN das Image kopiert werden,
+# es wird erst IM Container erstellt.
+models/
+
+# Logs und Test-Artefakte
+*.log
+.pytest_cache/
