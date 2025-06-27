@@ -1,6 +1,5 @@
-# requirements.txt
+pandas
 torch
 torchvision
 scikit-learn
-pandas
-numpy
+seaborn

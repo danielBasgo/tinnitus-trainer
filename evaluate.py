@@ -9,35 +9,38 @@ import pandas as pd
 import numpy as np
 import json
 import os
+import glob
+import sys
 
-# WICHTIG: Passen Sie diese Konfiguration an Ihr Projekt an!
 # ——————————————————————————————
-# 1) Konfiguration
+# 1) Configuration
 # ——————————————————————————————
-# FÜGEN SIE HIER DEN GENAUEN NAMEN IHRER BESTEN MODELLDATEI EIN!
-MODEL_PATH = "models/best_model_acc_90.69%_20231027_183000.pt" # Beispiel, ersetzen Sie dies!
+MODEL_DIR  = "models"
 VAL_DIR    = "processed_data/val"
 IMG_SIZE   = 224
 BATCH_SIZE = 32
 DEVICE     = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Laden der Klassenzuordnung
-MAPPING_PATH = "models/class_mapping.json"
-with open(MAPPING_PATH, 'r') as f:
-    class_to_idx = json.load(f)
-# Drehen Sie das Mapping um, um von Index zu Klassenname zu kommen
-idx_to_class = {v: k for k, v in class_to_idx.items()}
-CLASS_NAMES = [idx_to_class[i] for i in range(len(idx_to_class))]
+def find_latest_model(model_dir):
+    """Finds the most recently created model file in the directory."""
+    list_of_files = glob.glob(os.path.join(model_dir, '*.pt'))
+    if not list_of_files:
+        return None
+    latest_file = max(list_of_files, key=os.path.getctime)
+    return latest_file
+
+# Load class mapping
+MAPPING_PATH = os.path.join(MODEL_DIR, "class_mapping.json")
 
 
 # ——————————————————————————————
-# 2) Modell- und Daten-Setup (aus train.py kopiert)
+# 2) Model and Data Setup (copied from train.py)
 # ——————————————————————————————
-# Wir brauchen die build_model Funktion, um die Architektur zu laden
-from train import build_model # Wir importieren die Funktion aus Ihrer train.py Datei
+# We need the build_model function to load the architecture
+from train import build_model # We import the function from your train.py file
 
 def get_dataloader(data_dir, img_size, batch_size):
-    """Lädt die Daten für die Evaluation (OHNE Augmentation)."""
+    """Loads the data for evaluation (WITHOUT Augmentation)."""
     transform_pipeline = transforms.Compose([
         transforms.Resize((img_size, img_size)),
         transforms.ToTensor(),
@@ -48,14 +51,14 @@ def get_dataloader(data_dir, img_size, batch_size):
     return loader
 
 # ——————————————————————————————
-# 3) Evaluationsfunktion
+# 3) Evaluation Function
 # ——————————————————————————————
 def evaluate(model, dataloader, device):
     model.eval()
     all_preds = []
     all_labels = []
 
-    print("Starte Evaluation auf dem Validierungs-Set...")
+    print("Starting evaluation on the validation set...")
     with torch.no_grad():
         for inputs, labels in dataloader:
             inputs, labels = inputs.to(device), labels.to(device)
@@ -66,11 +69,11 @@ def evaluate(model, dataloader, device):
             all_preds.extend(preds.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
     
-    print("Evaluation abgeschlossen.")
+    print("Evaluation complete.")
     return all_labels, all_preds
 
 def plot_confusion_matrix(labels, preds, class_names):
-    """Erstellt und zeigt eine visualisierte Confusion Matrix."""
+    """Creates and displays a visualized Confusion Matrix."""
     cm = confusion_matrix(labels, preds)
     df_cm = pd.DataFrame(cm, index=class_names, columns=class_names)
     
@@ -79,30 +82,43 @@ def plot_confusion_matrix(labels, preds, class_names):
     
     heatmap.yaxis.set_ticklabels(heatmap.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=12)
     heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=12)
-    plt.ylabel('Wirklicher Zustand (Actual)')
-    plt.xlabel('Vorhersage (Predicted)')
+    plt.ylabel('Actual')
+    plt.xlabel('Predicted')
     plt.title('Confusion Matrix', fontsize=16)
     plt.show()
-
-
 # ——————————————————————————————
-# 4) Hauptskript
+# 4) Main Script
 # ——————————————————————————————
 if __name__ == "__main__":
-    # 1. Modell laden
-    print(f"Lade Modell von: {MODEL_PATH}")
-    model = build_model(DEVICE)
+    # 0. Find model and class mapping
+    MODEL_PATH = find_latest_model(MODEL_DIR)
+    if not MODEL_PATH:
+        print(f"ERROR: No model found in directory '{MODEL_DIR}'. Please train a model first.")
+        sys.exit(1)
+
+    if not os.path.exists(MAPPING_PATH):
+        print(f"ERROR: Class mapping '{MAPPING_PATH}' not found. Make sure train.py has been run.")
+        sys.exit(1)
+
+    with open(MAPPING_PATH, 'r') as f:
+        class_to_idx = json.load(f)
+    idx_to_class = {v: k for k, v in class_to_idx.items()}
+    CLASS_NAMES = [idx_to_class[i] for i in range(len(idx_to_class))]
+
+    # 1. Load model
+    print(f"Loading latest model: {MODEL_PATH}")
+    model = build_model(num_classes=len(CLASS_NAMES), device=DEVICE)
     model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
     
-    # 2. Daten laden
+    # 2. Load data
     val_loader = get_dataloader(VAL_DIR, IMG_SIZE, BATCH_SIZE)
     
-    # 3. Evaluation durchführen
+    # 3. Perform evaluation
     labels, preds = evaluate(model, val_loader, DEVICE)
     
-    # 4. Ergebnisse anzeigen
+    # 4. Display results
     print("\n--- Classification Report ---")
-    # Dieser Report zeigt Precision, Recall und F1-Score für jede Klasse
+    # This report shows Precision, Recall, and F1-Score for each class
     print(classification_report(labels, preds, target_names=CLASS_NAMES))
     
     print("\n--- Confusion Matrix ---")

@@ -95,6 +95,23 @@ To run this project locally, follow these steps:
     ```
     The trained models will be saved in the `models/` folder.
 
+## Script Distinctions: `evaluate.py` vs `generate_confusion_matrix.py`
+
+- **`evaluate.py`**
+  - Evaluates the latest trained model on the validation dataset.
+  - Prints a detailed classification report (precision, recall, F1-score) for each class in the console.
+  - Displays the confusion matrix as a plot, but does **not** save it to disk.
+  - Intended for quick, interactive evaluation and metric inspection.
+
+- **`generate_confusion_matrix.py`**
+  - Also evaluates the latest trained model on the validation dataset.
+  - Focuses on generating and saving a high-quality confusion matrix plot as an image file (`confusion_matrix.png`).
+  - Does **not** print the classification report.
+  - Useful for generating figures for reports or presentations.
+
+Both scripts share much of the same evaluation logic, but their outputs and intended use cases differ as described
+    
+
 ## Future Work
 
 *   **Detailed Analysis:** Generate a confusion matrix and calculate Precision, Recall, and F1-Score to better evaluate error types.
