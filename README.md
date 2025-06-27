@@ -23,6 +23,22 @@ The dataset consists of **1018 audiogram images**. The raw data is organized int
 
 The `prepare_data.py` script processes this raw data, splits it into a training set (80%) and a validation set (20%), and organizes it into a directory structure suitable for PyTorch's `ImageFolder`.
 
+## Example Audiograms
+
+Below are sample audiogram images from the dataset:
+
+| Normal Hearing (Left Ear) | Tinnitus (Right Ear) |
+|---------------------------|----------------------|
+| ![Audiogram chart for normal hearing in the left ear showing hearing thresholds within the normal and slight loss range across frequencies from 125 Hz to 8 kHz. The chart background is labeled with hearing loss categories such as normal, slight, mild, moderate, moderate severe, severe, and profound. Data points are connected with a blue line, and the overall tone is clinical and neutral.] (audiogram_dataset/Left Ear Charts/N1 Left.jpg) | ![Audiogram chart for tinnitus diagnosis in the right ear displaying hearing thresholds with a similar frequency range and layout. The chart includes the same labeled hearing loss categories and a blue line connecting data points. The environment is clinical and neutral, focusing on hearing assessment.] (audiogram_dataset/Right Ear Charts/T1
+ Right.jpg) |
+
+
+| Normal Hearing (Left Ear) | Tinnitus (Right Ear) |
+|---------------------------|----------------------|
+| ![Normal Left](audiogram_dataset/Left%20Ear%20Charts/N1%20Left.jpg) | ![Tinnitus Right](audiogram_dataset/Right%20Ear%20Charts/T1%20Right.jpg) |
+
+
+
 ## Methodology
 
 This project follows a classic workflow for image classification using transfer learning.
