@@ -114,10 +114,9 @@ Both scripts share much of the same evaluation logic, but their outputs and inte
 
 ## Future Work
 
-*   **Detailed Analysis:** Generate a confusion matrix and calculate Precision, Recall, and F1-Score to better evaluate error types.
+- [x] ~~**Detailed Analysis:** Generate a confusion matrix and calculate Precision, Recall, and F1-Score to better evaluate error types.~~
 *   **Inference Script:** Develop a script to load a single audiogram image and make a live prediction.
 *   **Model Tuning:** Experiment with larger architectures (e.g., ResNet34/50) and hyperparameter optimization.
 *   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) to make the model interactive.
-
 ---
 *This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject.*
