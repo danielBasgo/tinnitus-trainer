@@ -9,7 +9,6 @@ __pycache__/
 .venv/
 env/
 venv/
-audiogram_dataset/
 processed_data/
 audiogram_labels.csv/
 environment.yml
