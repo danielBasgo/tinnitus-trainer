@@ -1,4 +1,12 @@
+
 # Tinnitus Detection in Audiograms using Deep Learning
+
+![Badge showing Python 3.11 in blue](https://img.shields.io/badge/Python-3.11-blue) 
+![Badge showing PyTorch in bright green](https://img.shields.io/badge/PyTorch-brightgreen) 
+![Badge showing Docker in blue](https://img.shields.io/badge/Docker-blue) 
+![Badge showing Scikit-Learn in orange](https://img.shields.io/badge/Scikit--Learn-orange)
+
+- Four rectangular badges display the names and versions of key technologies used in the project: Python 3.11, PyTorch, Docker, and Scikit-Learn. Each badge uses a distinct color to represent its technology. The badges are arranged horizontally on a neutral background, conveying a professional and informative tone.
 
 A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images and identify patients at risk of tinnitus. The model achieves a **validation accuracy of 90.7%**.
 
@@ -35,9 +43,7 @@ Below are sample audiogram images from the dataset:
 
 | Normal Hearing (Left Ear) | Tinnitus (Right Ear) |
 |---------------------------|----------------------|
-| ![Normal Left](audiogram_dataset/Left%20Ear%20Charts/N1%20Left.jpg) | ![Tinnitus Right](audiogram_dataset/Right%20Ear%20Charts/T1%20Right.jpg) |
-
-
+| ![Normal Left](assets/N1%20Left.jpg) | ![Tinnitus Right](assets/T1%20Right.jpg) |
 
 ## Methodology
 
@@ -60,6 +66,22 @@ The raw data is copied into a `train/` and `val/` directory structure with `norm
 *   **Epochs:** 10
 *   **Data Augmentation:** To make the model more robust, random transformations were applied to the training data, including random horizontal flips, slight rotations, and color jitter.
 
+## Script Distinctions: `evaluate.py` vs `generate_confusion_matrix.py`
+
+- **`evaluate.py`**
+  - Evaluates the latest trained model on the validation dataset.
+  - Prints a detailed classification report (precision, recall, F1-score) for each class in the console.
+  - Displays the confusion matrix as a plot, but does **not** save it to disk.
+  - Intended for quick, interactive evaluation and metric inspection.
+
+- **`generate_confusion_matrix.py`**
+  - Also evaluates the latest trained model on the validation dataset.
+  - Focuses on generating and saving a high-quality confusion matrix plot as an image file (`confusion_matrix.png`).
+  - Does **not** print the classification report.
+  - Useful for generating figures for reports or presentations.
+
+Both scripts share much of the same evaluation logic, but their outputs and intended use cases differ as described
+
 ## Results
 
 After 10 epochs of training, the model achieved an outstanding performance, demonstrating that overfitting was successfully minimized:
@@ -73,6 +95,7 @@ A validation accuracy of over 90% with a minimal gap to the training accuracy in
 
 ## How to Use
 
+### Method 1: Local Environment
 To run this project locally, follow these steps:
 
 1.  **Clone the repository:**
@@ -110,23 +133,36 @@ To run this project locally, follow these steps:
     python train.py
     ```
     The trained models will be saved in the `models/` folder.
+   
+### Method 2: Using Docker (Recommended for Reproducibility)
+This is the easiest way to run the project, as it handles all dependencies automatically.
 
-## Script Distinctions: `evaluate.py` vs `generate_confusion_matrix.py`
+1.  **Clone the repository:**
+    ```bash
+    git clone ...
+    cd ...
+    ```
 
-- **`evaluate.py`**
-  - Evaluates the latest trained model on the validation dataset.
-  - Prints a detailed classification report (precision, recall, F1-score) for each class in the console.
-  - Displays the confusion matrix as a plot, but does **not** save it to disk.
-  - Intended for quick, interactive evaluation and metric inspection.
+2.  **Place the data:**
+    Follow step 3 from Method 1 to place the raw data in the `audiogram_dataset/` folder.
 
-- **`generate_confusion_matrix.py`**
-  - Also evaluates the latest trained model on the validation dataset.
-  - Focuses on generating and saving a high-quality confusion matrix plot as an image file (`confusion_matrix.png`).
-  - Does **not** print the classification report.
-  - Useful for generating figures for reports or presentations.
+3.  **Prepare the data:**
+    ```bash
+    python prepare_data.py
+    ```
 
-Both scripts share much of the same evaluation logic, but their outputs and intended use cases differ as described
-    
+4.  **Build the Docker image:**
+    ```bash
+    docker build -t tinnitus-trainer .
+    ```
+
+5.  **Run the training:**
+    This command will run the training and save the final model to a `models/` folder in your project directory.
+    ```bash
+    docker run --rm -v ${PWD}/models:/app/models tinnitus-trainer
+    ```
+
+
 
 ## Future Work
 
