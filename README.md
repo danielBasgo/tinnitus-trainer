@@ -6,8 +6,6 @@
 ![Badge showing Docker in blue](https://img.shields.io/badge/Docker-blue) 
 ![Badge showing Scikit-Learn in orange](https://img.shields.io/badge/Scikit--Learn-orange)
 
-- Four rectangular badges display the names and versions of key technologies used in the project: Python 3.11, PyTorch, Docker, and Scikit-Learn. Each badge uses a distinct color to represent its technology. The badges are arranged horizontally on a neutral background, conveying a professional and informative tone.
-
 A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images and identify patients at risk of tinnitus. The model achieves a **validation accuracy of 90.7%**.
 
 ---
@@ -161,8 +159,6 @@ This is the easiest way to run the project, as it handles all dependencies autom
     ```bash
     docker run --rm -v ${PWD}/models:/app/models tinnitus-trainer
     ```
-
-
 
 ## Future Work
 
