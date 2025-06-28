@@ -1,12 +1,14 @@
 
+### **README.md**
+
 # Tinnitus Detection in Audiograms using Deep Learning
 
-![Badge showing Python 3.11 in blue](https://img.shields.io/badge/Python-3.11-blue) 
-![Badge showing PyTorch in bright green](https://img.shields.io/badge/PyTorch-brightgreen) 
-![Badge showing Docker in blue](https://img.shields.io/badge/Docker-blue) 
+![Badge showing Python 3.11 in blue](https://img.shields.io/badge/Python-3.11-blue)
+![Badge showing PyTorch in bright green](https://img.shields.io/badge/PyTorch-brightgreen)
+![Badge showing Docker in blue](https://img.shields.io/badge/Docker-blue)
 ![Badge showing Scikit-Learn in orange](https://img.shields.io/badge/Scikit--Learn-orange)
 
-A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images and identify patients at risk of tinnitus. The model achieves a **validation accuracy of 90.7%**.
+A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images and identify patients at risk of tinnitus. After expanding the dataset, the model achieves a **validation accuracy of 93.25%**.
 
 ---
 
@@ -20,151 +22,115 @@ My goal was to explore whether a deep learning model could be trained to automat
 
 ## Dataset
 
-The dataset for this project was sourced from the "Tinnitus Detection" notebook on Kaggle. Thank you to Ashik Shahriar for making this data available.
-*   **Data Source:** [Kaggle - Tinnitus Detection](https://www.kaggle.com/code/ashikshahriar/tinnitus-detection/notebook)
+The initial dataset for this project was sourced from the "Tinnitus Detection" notebook on Kaggle. To improve model performance and robustness, this was later supplemented with a second, more varied dataset containing different levels of hearing loss.
 
-The dataset consists of **1018 audiogram images**. The raw data is organized into `Right Ear Charts` and `Left Ear Charts` folders. Each image is labeled by a prefix in its filename:
-*   `N... .jpg`: Normal hearing
-*   `T... .jpg`: Tinnitus diagnosed
+*   **Data Source 1:** [Kaggle - Tinnitus Detection](https://www.kaggle.com/code/ashikshahriar/tinnitus-detection/notebook)
+*   **Data Source 2:** [Kaggle - Audiogram Hearing-Loss Classification](https://www.kaggle.com/datasets/khalidkamal/audiogram-hearingloss-classification)
 
-The `prepare_data.py` script processes this raw data, splits it into a training set (80%) and a validation set (20%), and organizes it into a directory structure suitable for PyTorch's `ImageFolder`.
+The `prepare_data.py` and `prepare_new_dataset.py` scripts process this raw data, map varied hearing loss levels (e.g., 'Mild', 'Severe') to the 'tinnitus' class, split the combined data into training (80%) and validation (20%) sets, and organize it for PyTorch.
 
-## Example Audiograms
+### What is an Audiogram?
 
-Below are sample audiogram images from the dataset:
+An audiogram is a graphical representation of the results of a hearing test, showing a person's hearing thresholds across various frequencies. It helps in diagnosing and monitoring hearing loss by charting the softest sound levels (in decibels, dB) that a person can hear at different frequencies (in Hertz, Hz).
 
-| Normal Hearing (Left Ear) | Tinnitus (Right Ear) |
-|---------------------------|----------------------|
-| ![Audiogram chart for normal hearing in the left ear showing hearing thresholds within the normal and slight loss range across frequencies from 125 Hz to 8 kHz. The chart background is labeled with hearing loss categories such as normal, slight, mild, moderate, moderate severe, severe, and profound. Data points are connected with a blue line, and the overall tone is clinical and neutral.] (audiogram_dataset/Left Ear Charts/N1 Left.jpg) | ![Audiogram chart for tinnitus diagnosis in the right ear displaying hearing thresholds with a similar frequency range and layout. The chart includes the same labeled hearing loss categories and a blue line connecting data points. The environment is clinical and neutral, focusing on hearing assessment.] (audiogram_dataset/Right Ear Charts/T1
- Right.jpg) |
+*   **What does an audiogram show?**
+    *   It displays a person's hearing thresholds—the quietest sound level they can perceive at different frequencies.
+    *   The horizontal axis (X-axis) represents sound frequency (Hz), while the vertical axis (Y-axis) represents sound intensity (dB).
+    *   Results are plotted as symbols (e.g., "O" for the right ear, "X" for the left ear).
 
-
-| Normal Hearing (Left Ear) | Tinnitus (Right Ear) |
-|---------------------------|----------------------|
-| ![Normal Left](assets/N1%20Left.jpg) | ![Tinnitus Right](assets/T1%20Right.jpg) |
+*   **What can be interpreted from an audiogram?**
+    *   **Degree and Type of Hearing Loss:** It quantifies severity (mild, moderate, severe) and can indicate the type (e.g., sensorineural).
+    *   **Affected Frequencies:** It reveals which ranges (low, mid, high tones) are affected.
 
 ## Methodology
 
 This project follows a classic workflow for image classification using transfer learning.
 
-#### 1. Data Preprocessing (`prepare_data.py`)
-The raw data is copied into a `train/` and `val/` directory structure with `normal/` and `tinnitus/` subfolders, enabling efficient data loading.
+#### 1. Model Architecture (`train.py`)
+*   **Transfer Learning:** A **ResNet18** model, pre-trained on the ImageNet dataset, was used to leverage its existing knowledge of patterns and shapes.
+*   **Customization:** The final layer of the ResNet18 model was replaced with a new classifier optimized for our two classes (`normal` vs. `tinnitus`), including a **Dropout layer (p=0.5)** for regularization.
 
-#### 2. Model Architecture (`train.py`)
-*   **Transfer Learning:** A **ResNet18** model, pre-trained on the ImageNet dataset, was used. This leverages the model's existing knowledge of edges, shapes, and textures.
-*   **Customization:** The final fully-connected layer of the ResNet18 model was replaced with a new classifier optimized for our two classes (`normal` vs. `tinnitus`). This classifier includes:
-    *   A linear layer
-    *   A ReLU activation function
-    *   A **Dropout layer (p=0.5)** for regularization to prevent overfitting.
-
-#### 3. Training (`train.py`)
+#### 2. Training (`train.py`)
 *   **Framework:** PyTorch
 *   **Optimizer:** Adam (`lr=1e-4`)
-*   **Loss Function:** Cross-Entropy Loss
-*   **Epochs:** 10
-*   **Data Augmentation:** To make the model more robust, random transformations were applied to the training data, including random horizontal flips, slight rotations, and color jitter.
+*   **Data Augmentation:** To make the model more robust, random transformations like horizontal flips, rotations, and color jitter were applied to the training data.
 
-## Script Distinctions: `evaluate.py` vs `generate_confusion_matrix.py`
+## Results & Key Insights
 
-- **`evaluate.py`**
-  - Evaluates the latest trained model on the validation dataset.
-  - Prints a detailed classification report (precision, recall, F1-score) for each class in the console.
-  - Displays the confusion matrix as a plot, but does **not** save it to disk.
-  - Intended for quick, interactive evaluation and metric inspection.
-
-- **`generate_confusion_matrix.py`**
-  - Also evaluates the latest trained model on the validation dataset.
-  - Focuses on generating and saving a high-quality confusion matrix plot as an image file (`confusion_matrix.png`).
-  - Does **not** print the classification report.
-  - Useful for generating figures for reports or presentations.
-
-Both scripts share much of the same evaluation logic, but their outputs and intended use cases differ as described
-
-## Results
-
-After 10 epochs of training, the model achieved an outstanding performance, demonstrating that overfitting was successfully minimized:
+After training on the combined dataset, the model's performance significantly improved, demonstrating excellent generalization.
 
 | Metric         | Training Set | Validation Set   |
 | -------------- | ------------ | ---------------- |
-| **Accuracy**   | 90.91%       | **90.69%**       |
-| **Loss**       | 0.2215       | 0.2936           |
+| **Accuracy**   | 93.53%       | **93.25%**       |
+| **Loss**       | 0.1698       | 0.1634           |
 
-A validation accuracy of over 90% with a minimal gap to the training accuracy indicates a robust model that generalizes well.
+### A Key Insight: Understanding Model Uncertainty
+
+During my journey with this project, one of the most profound learning moments came not from a high-confidence success, but from a low-confidence prediction. The model analyzed the following audiogram:
+
+![A borderline audiogram case that the model predicted with low confidence](assets/borderline_case_audiogram.png)
+
+It returned a prediction of **"Normal"** but with a very low confidence of **58.49%**. This initially seemed like a weakness, but it led me to a key insight into how the model "thinks":
+
+*   **The "Normal" Signal (58.49%):** The model correctly recognized that all data points fall within the 0-25 dB range, which is clinically defined as normal hearing.
+*   **The "Tinnitus" Signal (41.51%):** However, the model also detected a conflicting pattern: a **distinct downward slope in the high frequencies** (from 2kHz to 8kHz). Through its training, the model learned that this shape is a common feature in audiograms of patients with tinnitus.
+
+**The Learning Journey Insight:**
+The model's low confidence was not a failure; it was **successfully communicating its own uncertainty**. It correctly identified the ambiguity of a borderline case. This taught me that the goal of a robust AI model isn't always to be 100% certain, but to accurately reflect the complexity of the data. For a real-world application, this is invaluable, as it allows for a **"human-in-the-loop"** system where ambiguous cases are flagged for expert review.
 
 ## How to Use
 
 ### Method 1: Local Environment
-To run this project locally, follow these steps:
-
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/YourUsername/your-repo-name.git
     cd your-repo-name
     ```
-
-2.  **Install dependencies:**
-    It is recommended to use a virtual environment.
+2.  **Set up the Conda environment:**
+    The `environment.yml` file is provided for easy setup.
     ```bash
-    pip install -r requirements.txt
+    conda env create -f environment.yml
+    conda activate tinnitus-projekt
     ```
-
 3.  **Place the data:**
-    Download the raw data and place the `Right Ear Charts` and `Left Ear Charts` folders inside a directory named `audiogram_dataset/` in the project's root. The structure should look like this:
-    ```
-    .
-    ├── audiogram_dataset/
-    │   ├── Left Ear Charts/
-    │   └── Right Ear Charts/
-    ├── prepare_data.py
-    └── train.py
-    ```
-
+    Download the raw data from the sources linked above and place them in `audiogram_dataset/` and `new_dataset/` folders respectively.
 4.  **Prepare the data:**
-    Run the script to sort the data into the `processed_data` folder.
+    Run the scripts sequentially to process both datasets.
     ```bash
     python prepare_data.py
+    python prepare_new_dataset.py
     ```
-
 5.  **Train the model:**
-    Start the training process.
     ```bash
     python train.py
     ```
-    The trained models will be saved in the `models/` folder.
-   
+6.  **Make a prediction on a new image:**
+    ```bash
+    python predict.py --image "path/to/your/image.jpg"
+    ```
+
 ### Method 2: Using Docker (Recommended for Reproducibility)
-This is the easiest way to run the project, as it handles all dependencies automatically.
+This method handles all software dependencies automatically.
 
-1.  **Clone the repository:**
-    ```bash
-    git clone ...
-    cd ...
-    ```
-
-2.  **Place the data:**
-    Follow step 3 from Method 1 to place the raw data in the `audiogram_dataset/` folder.
-
-3.  **Prepare the data:**
-    ```bash
-    python prepare_data.py
-    ```
-
-4.  **Build the Docker image:**
+1.  Follow steps 1 and 3 from Method 1 to clone the repo and place the data.
+2.  Prepare the data by running `python prepare_data.py` and `python prepare_new_dataset.py`.
+3.  **Build the Docker image:**
     ```bash
     docker build -t tinnitus-trainer .
     ```
-
-5.  **Run the training:**
-    This command will run the training and save the final model to a `models/` folder in your project directory.
+4.  **Run the training:**
+    This command saves the final model to a `models/` folder on your computer.
     ```bash
+    # For PowerShell/Linux/macOS
     docker run --rm -v ${PWD}/models:/app/models tinnitus-trainer
+    # For Windows CMD
+    docker run --rm -v "%cd%/models":/app/models tinnitus-trainer
     ```
 
 ## Future Work
-
-- [x] ~~**Detailed Analysis:** Generate a confusion matrix and calculate Precision, Recall, and F1-Score to better evaluate error types.~~
-*   **Inference Script:** Develop a script to load a single audiogram image and make a live prediction.
+*   **Inference Script:** Develop a script to load a single audiogram image and make a live prediction. *(Done with `predict.py`)*
 *   **Model Tuning:** Experiment with larger architectures (e.g., ResNet34/50) and hyperparameter optimization.
-*   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) to make the model interactive.
+*   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) where a user can upload an audiogram and see the model's prediction and confidence score.
+
 ---
 *This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject.*
