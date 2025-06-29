@@ -2,7 +2,11 @@
 
 # 1. Base Image: Use an official, slim Python image.
 # 'python:3.11-slim' is a good choice as it's smaller than the full version.
-FROM python:3.11-slim-bullseye
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # Ensure all security updates are installed
 RUN apt-get update && apt-get upgrade -y && apt-get clean
