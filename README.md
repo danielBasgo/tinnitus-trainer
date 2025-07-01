@@ -126,8 +126,7 @@ This method handles all software dependencies automatically.
     # For Windows CMD
     docker run --rm -v "%cd%/models":/app/models tinnitus-trainer
     ```
-
-.
+    
 This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject.
 
 ## Future Work
