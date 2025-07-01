@@ -87,7 +87,7 @@ The model's low confidence was not a failure; it was **successfully communicatin
     cd tinnitus-trainer
     ```
 2.  **Set up the Conda environment:**
-    The `environment.yml` file is provided for easy setup.
+    The `environment.yaml` file is provided for easy setup.
     ```bash
     conda env create -f environment.yaml
     conda activate tinnitus-projekt
