@@ -132,7 +132,7 @@ This project was developed as part of my personal learning journey in data scien
 
 ## Future Work
 *   **Inference Script:** Develop a script to load a single audiogram image and make a live prediction. *(Done with `predict.py`)*
-*   **ML Deployment:** Deploy the trained model to a Vertex AI Endpoint to make it available as a live API.*(Done with Google Cloud)
+*   **ML Deployment:** Deploy the trained model to a Vertex AI Endpoint to make it available as a live API.
 *   **Model Tuning:** Experiment with larger architectures (e.g., ResNet34/50) and hyperparameter optimization.
 *   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) where a user can upload an audiogram and see the model's prediction and confidence score.
 
