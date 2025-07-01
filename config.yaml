@@ -1,4 +1,4 @@
-# config.yaml (final, correct version)
+# config.yaml 
 jobSpec:
   workerPoolSpecs:
     - machineSpec:

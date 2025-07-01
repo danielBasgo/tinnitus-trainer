@@ -83,13 +83,13 @@ The model's low confidence was not a failure; it was **successfully communicatin
 ### Method 1: Local Environment
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/YourUsername/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/danielBasgo/tinnitus-trainer.git
+    cd tinnitus-trainer
     ```
 2.  **Set up the Conda environment:**
     The `environment.yml` file is provided for easy setup.
     ```bash
-    conda env create -f environment.yml
+    conda env create -f environment.yaml
     conda activate tinnitus-projekt
     ```
 3.  **Place the data:**
@@ -127,8 +127,34 @@ This method handles all software dependencies automatically.
     docker run --rm -v "%cd%/models":/app/models tinnitus-trainer
     ```
 
+(Optional) Bonus Chapter: Scaling to the Cloud
+The Story: Sometimes, the best learning opportunities come from happy accidents. I unintentionally subscribed to Google Cloud Platform and decided to turn this into a chance to elevate the project from a local script to a professional MLOps workflow. This section documents how to run the entire training pipeline on a powerful cloud infrastructure.
+Method 2: Cloud Training on Vertex AI
+This method leverages the cloud for scalable, powerful training. It assumes you have already prepared your data locally (Step 3 & 4 from Method 1).
+Prerequisites:
+A Google Cloud account with an active billing account.
+The gcloud CLI installed and initialized (gcloud init).
+Cloud Setup (One-time):
+Create GCS Bucket: gsutil mb -l europe-west3 gs://[YOUR_UNIQUE_BUCKET_NAME]
+Upload Data: gsutil -m cp -r processed_data gs://[YOUR_UNIQUE_BUCKET_NAME]/
+Create Artifact Registry Repo: gcloud artifacts repositories create tinnitus-repo --repository-format=docker --location=europe-west3
+Configure Docker: gcloud auth configure-docker europe-west3-docker.pkg.dev
+Build and Push Docker Image:
+Modify train.py to point to your GCS bucket name.
+Build: docker build -t tinnitus-trainer .
+Tag & Push: Tag the image for your registry and run docker push.
+Start the Vertex AI Training Job (via GUI):
+In the Google Cloud Console, navigate to Vertex AI > Training.
+Click CREATE and follow the GUI instructions to set up a Custom training job using your Docker container and desired hardware (e.g., n1-standard-4 with an NVIDIA_TESLA_T4 GPU).
+Future Work
+ML Deployment: Deploy the trained model to a Vertex AI Endpoint to make it available as a live API.
+Web App: Create a simple web interface (e.g., using Streamlit or Flask, hosted on Cloud Run) that calls the Vertex AI Endpoint, allowing users to upload an audiogram and get a live prediction.
+CI/CD Pipeline: Automate the build, push, and training process using Cloud Build.
+This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject.
+
 ## Future Work
 *   **Inference Script:** Develop a script to load a single audiogram image and make a live prediction. *(Done with `predict.py`)*
+*   **ML Deployment:** Deploy the trained model to a Vertex AI Endpoint to make it available as a live API.*(Done with Google Cloud)
 *   **Model Tuning:** Experiment with larger architectures (e.g., ResNet34/50) and hyperparameter optimization.
 *   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) where a user can upload an audiogram and see the model's prediction and confidence score.
 
