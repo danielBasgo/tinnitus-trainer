@@ -64,6 +64,8 @@ After training on the combined dataset, the model's performance significantly im
 
 During my journey with this project, one of the most profound learning moments came not from a high-confidence success, but from a low-confidence prediction. The model analyzed the following audiogram:
 
+Audiogram chart displaying hearing thresholds for the right ear across frequencies from 500 Hz to 8000 Hz. The data points form a line that starts at 10 dB at 500 Hz, rises slightly to 5 dB at 2000 Hz, then gradually slopes downward to 20 dB at 8000 Hz. The chart includes a legend indicating Right Ear, and the title reads Audiogram - Deafness Level: Normal Right. The y-axis is labeled Threshold dB and the x-axis is labeled Frequency Hz. The overall tone is clinical and neutral, illustrating a borderline case with normal hearing but a noticeable downward slope at higher frequencies.
+
 It returned a prediction of **"Normal"** but with a very low confidence of **58.49%**. This initially seemed like a weakness, but it led me to a key insight into how the model "thinks":
 
 * **The "Normal" Signal (58.49%):** The model correctly recognized that all data points fall within the 0-25 dB range, which is clinically defined as normal hearing.
