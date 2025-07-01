@@ -80,6 +80,7 @@ The model's low confidence was not a failure; it was **successfully communicatin
 
 ### Method 1: Local Environment
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/danielBasgo/tinnitus-trainer.git
@@ -108,6 +109,8 @@ The model's low confidence was not a failure; it was **successfully communicatin
     python predict.py --image "path/to/your/image.jpg"
     ```
 =======
+=======
+>>>>>>> Stashed changes
 
 1. **Clone the repository:**
 
@@ -138,12 +141,16 @@ The model's low confidence was not a failure; it was **successfully communicatin
    ```bash
    python predict.py --image "path/to/your/image.jpg"
    ```
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 ### Method 2: Using Docker (Recommended for Reproducibility)
 
 This method handles all software dependencies automatically.
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 1.  Follow steps 1 and 3 from Method 1 to clone the repo and place the data.
 2.  Prepare the data by running `python prepare_data.py` and `python prepare_new_dataset.py`.
@@ -169,6 +176,97 @@ This project was developed as part of my personal learning journey in data scien
 *   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) where a user can upload an audiogram and see the model's prediction and confidence score.
 
 ---
+=======
+1. Follow steps 1 and 3 from Method 1 to clone the repo and place the data.
+2. Prepare the data by running `python prepare_data.py` and `python prepare_new_dataset.py`.
+3. **Build the Docker image:**
+
+   ```bash
+   docker build -t tinnitus-trainer .
+   ```
+4. **Run the training:**
+   This command saves the final model to a `models/` folder on your computer.
+
+   ```bash
+   # For PowerShell/Linux/macOS
+   docker run --rm -v ${PWD}/models:/app/models tinnitus-trainer
+   # For Windows CMD
+   docker run --rm -v "%cd%/models":/app/models tinnitus-trainer
+   ```
+
+### Optional Bonus Chapter: Scaling to the Cloud
+
+Sometimes the best learning opportunities come from happy accidents. After subscribing to Google Cloud Platform, we turned this project into a professional MLOps workflow by running the training pipeline on scalable cloud infrastructure.
+
+#### Cloud Training on Vertex AI
+
+> Assumes you have already prepared your data locally (see Method 1, Steps 3 & 4).
+
+##### Prerequisites
+
+* Google Cloud account with billing enabled
+* `gcloud` CLI installed and initialized (`gcloud init`)
+
+##### Cloud Setup (One-time)
+
+1. **Create a GCS bucket**
+
+   ```bash
+   gsutil mb -l europe-west3 gs://<YOUR_UNIQUE_BUCKET_NAME>
+   ```
+2. **Upload processed data**
+
+   ```bash
+   gsutil -m cp -r processed_data gs://<YOUR_UNIQUE_BUCKET_NAME>/
+   ```
+3. **Create an Artifact Registry repo**
+
+   ```bash
+   gcloud artifacts repositories create tinnitus-repo \
+     --repository-format=docker \
+     --location=europe-west3
+   ```
+4. **Configure Docker authentication**
+
+   ```bash
+   gcloud auth configure-docker europe-west3-docker.pkg.dev
+   ```
+
+##### Build & Push Your Docker Image
+
+1. Update `train.py` to reference your GCS bucket.
+2. Build the image:
+
+   ```bash
+   docker build -t tinnitus-trainer .
+   ```
+3. Tag and push:
+
+   ```bash
+   docker tag tinnitus-trainer \
+     europe-west3-docker.pkg.dev/<PROJECT-ID>/tinnitus-repo/tinnitus-trainer:latest
+
+   docker push \
+     europe-west3-docker.pkg.dev/<PROJECT-ID>/tinnitus-repo/tinnitus-trainer:latest
+   ```
+
+##### Run a Vertex AI Custom Training Job
+
+1. In the Google Cloud Console, go to **Vertex AI > Training**.
+2. Click **CREATE** → **Custom training job**.
+3. Select your container image, region (`europe-west3`), machine type (e.g., `n1-standard-4` + `NVIDIA_TESLA_T4`), and any additional parameters.
+4. Launch the job.
+
+## Future Work
+
+* **Inference Script:** Develop a script to load a single audiogram image and make a live prediction. *(Done with ********`predict.py`********)*
+* **ML Deployment:** Deploy the trained model to a Vertex AI Endpoint to make it available as a live API.
+* **Model Tuning:** Experiment with larger architectures (e.g., ResNet34/50) and hyperparameter optimization.
+* **Web App:** Create a simple web interface (e.g., Streamlit or Flask) where a user can upload an audiogram and see the model's prediction and confidence score.
+
+---
+
+>>>>>>> Stashed changes
 =======
 1. Follow steps 1 and 3 from Method 1 to clone the repo and place the data.
 2. Prepare the data by running `python prepare_data.py` and `python prepare_new_dataset.py`.
