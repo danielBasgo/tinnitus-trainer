@@ -1,7 +1,5 @@
 # Tinnitus Detection in Audiograms using Deep Learning
 
-\\
-
 A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images and identify patients at risk of tinnitus. After expanding the dataset, the model achieves a **validation accuracy of 93.25%**.
 
 ---
