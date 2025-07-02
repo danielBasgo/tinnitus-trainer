@@ -64,7 +64,14 @@ After training on the combined dataset, the model's performance significantly im
 
 During my journey with this project, one of the most profound learning moments came not from a high-confidence success, but from a low-confidence prediction. The model analyzed the following audiogram:
 
-Audiogram chart displaying hearing thresholds for the right ear across frequencies from 500 Hz to 8000 Hz. The data points form a line that starts at 10 dB at 500 Hz, rises slightly to 5 dB at 2000 Hz, then gradually slopes downward to 20 dB at 8000 Hz. The chart includes a legend indicating Right Ear, and the title reads Audiogram - Deafness Level: Normal Right. The y-axis is labeled Threshold dB and the x-axis is labeled Frequency Hz. The overall tone is clinical and neutral, illustrating a borderline case with normal hearing but a noticeable downward slope at higher frequencies.
+Below are sample audiogram images from the dataset:
+
+| Normal Hearing Example | Tinnitus Example |
+|-----------------------|------------------|
+| ![Audiogram chart for normal hearing: blue line with X markers at 10 dB across frequencies from 250 Hz to 8 kHz, all within the normal range. The chart background is clinical and neutral, with labeled axes for dB HL and Hz, and text indicating Normal, Slight, Mild, Moderate, Mod severe, Severe, and Profound hearing loss levels.](assets/N1% Left.jpg) | ![Audiogram chart for tinnitus: blue line with X markers at 10 dB across frequencies from 250 Hz to 8 kHz, all within the normal range. The chart background is clinical and neutral, with labeled axes for dB HL and Hz, and text indicating Normal, Slight, Mild, Moderate, Mod severe, Severe, and Profound hearing loss levels.] (assets/T1%Right.jpg) |
+
+Audiogram chart displaying hearing thresholds for the right ear across frequencies from 500 Hz to 8000 Hz. The data points form a line that starts at 10 dB at 500 Hz, rises slightly to 5 dB at 2000 Hz, then gradually slopes downward to 20 dB at 8000 Hz. The chart includes a legend indicating Right Ear, and the title reads Audiogram - Deafness Level: Normal Right. The y-axis is labeled Threshold dB and the x-axis is labeled Frequency Hz. The overall tone is clinical and neutral, illustrating a borderline case with normal hearing but a noticeable downward slope at higher frequencies.## Example Audiograms
+
 
 It returned a prediction of **"Normal"** but with a very low confidence of **58.49%**. This initially seemed like a weakness, but it led me to a key insight into how the model "thinks":
 
