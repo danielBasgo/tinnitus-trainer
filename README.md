@@ -23,6 +23,11 @@ The `prepare_data.py` and `prepare_new_dataset.py` scripts process this raw data
 
 ### What is an Audiogram?
 
+Below are sample audiogram images from the dataset:
+| Normal Hearing Example | Tinnitus Example |
+|-----------------------|------------------|
+| ![Audiogram chart for normal hearing](assets/N1%20Left.jpg) | ![Audiogram chart for tinnitus](assets/T1%20Right.jpg) |
+
 An audiogram is a graphical representation of the results of a hearing test, showing a person's hearing thresholds across various frequencies. It helps in diagnosing and monitoring hearing loss by charting the softest sound levels (in decibels, dB) that a person can hear at different frequencies (in Hertz, Hz).
 
 * **What does an audiogram show?**
@@ -64,11 +69,7 @@ After training on the combined dataset, the model's performance significantly im
 
 During my journey with this project, one of the most profound learning moments came not from a high-confidence success, but from a low-confidence prediction. The model analyzed the following audiogram:
 
-Below are sample audiogram images from the dataset:
-| Normal Hearing Example | Tinnitus Example |
-|-----------------------|------------------|
-| ![Audiogram chart for normal hearing](assets/N1%20Left.jpg) | ![Audiogram chart for tinnitus](assets/T1%20Right.jpg) |
-
+![Audiogram chart for borderline_case](assets/borderline_case_audiogramm.jpg)
 
 Audiogram chart displaying hearing thresholds for the right ear across frequencies from 500 Hz to 8000 Hz. The data points form a line that starts at 10 dB at 500 Hz, rises slightly to 5 dB at 2000 Hz, then gradually slopes downward to 20 dB at 8000 Hz. The chart includes a legend indicating Right Ear, and the title reads Audiogram - Deafness Level: Normal Right. The y-axis is labeled Threshold dB and the x-axis is labeled Frequency Hz. The overall tone is clinical and neutral, illustrating a borderline case with normal hearing but a noticeable downward slope at higher frequencies.## Example Audiograms
 
