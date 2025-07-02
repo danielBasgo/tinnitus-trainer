@@ -7,44 +7,69 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from datetime import datetime
 import sys
-from google.cloud import storage
+
+try:
+    from google.cloud import storage  # Optional dependency
+except ImportError:  # pragma: no cover - optional
+    storage = None
 
 # ——————————————————————————————
 # 1) Configuration
 # ——————————————————————————————
 BATCH_SIZE = 32
-EPOCHS     = 10
-IMG_SIZE   = 224
-DEVICE     = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+EPOCHS = 10
+IMG_SIZE = 224
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 LOCAL_DATA_DIR = "/tmp/data"
 LOCAL_MODEL_DIR = "/tmp/models"
 os.makedirs(LOCAL_DATA_DIR, exist_ok=True)
 os.makedirs(LOCAL_MODEL_DIR, exist_ok=True)
 
+# Google Cloud Storage settings (optional)
+GCS_BUCKET_NAME = "tinnitus-trainer-data"
+# Path inside the bucket where processed data is stored
+GCS_DATA_PATH = "processed_data"
+# Path inside the bucket where models and mapping files will be uploaded
+GCS_MODEL_OUTPUT_PATH = "models"
+
+# Enable GCS integration only if explicitly requested and the library is present
+USE_GCS = os.environ.get("USE_GCS", "false").lower() in {"1", "true", "yes"} and storage is not None
+if USE_GCS:
+    print("GCS integration enabled.")
+else:
+    if storage is None:
+        print("google-cloud-storage not available, running without GCS integration.")
+    else:
+        print("GCS integration disabled.")
+
 # GCS Helper Functions
 # ——————————————————————————————
 
 def download_gcs_directory(bucket_name, source_directory, destination_directory):
     """Lädt einen kompletten Ordner von GCS herunter."""
+    if not USE_GCS:
+        return
+
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
-    blobs = bucket.list_blobs(prefix=source_directory)  # Liste alle Objekte im Ordner auf
+    blobs = bucket.list_blobs(prefix=source_directory)
 
     print(f"Downloading data from gs://{bucket_name}/{source_directory} to {destination_directory}...")
     for blob in blobs:
-        # Erstelle die lokale Ordnerstruktur
         relative_path = os.path.relpath(blob.name, source_directory)
         local_path = os.path.join(destination_directory, relative_path)
         os.makedirs(os.path.dirname(local_path), exist_ok=True)
-        
-        # Lade die Datei herunter
+
         if not blob.name.endswith('/'):
             blob.download_to_filename(local_path)
     print("Download complete.")
 
 def upload_to_gcs(bucket_name, source_file_path, destination_blob_name):
     """Lädt eine einzelne Datei nach GCS hoch."""
+    if not USE_GCS:
+        return
+
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
@@ -68,16 +93,18 @@ if not os.path.isdir(TRAIN_DIR) or not os.path.isdir(VAL_DIR):
 # ——————————————————————————————
 
 def get_dataloaders(batch_size, img_size):
-    # Define the GCS bucket and data path
-    GCS_BUCKET_NAME = "tinnitus-trainer-data"
-    GCS_DATA_PATH = "processed_data"  # Path in GCS where the data is stored
-    download_gcs_directory(GCS_BUCKET_NAME, GCS_DATA_PATH, LOCAL_DATA_DIR)
+    # Download data from Google Cloud Storage if enabled
+    if USE_GCS:
+        download_gcs_directory(GCS_BUCKET_NAME, GCS_DATA_PATH, LOCAL_DATA_DIR)
+        base_dir = LOCAL_DATA_DIR
+    else:
+        base_dir = "."
 
-    local_train_dir = os.path.join(LOCAL_DATA_DIR, TRAIN_DIR)
-    local_val_dir   = os.path.join(LOCAL_DATA_DIR, VAL_DIR)
+    local_train_dir = os.path.join(base_dir, TRAIN_DIR)
+    local_val_dir   = os.path.join(base_dir, VAL_DIR)
     
     if not os.path.isdir(local_train_dir) or not os.path.isdir(local_val_dir):
-        print(f"ERROR: Training ('{local_train_dir}') or validation ('{local_val_dir}') directory not found after download.")
+        print(f"ERROR: Training ('{local_train_dir}') or validation ('{local_val_dir}') directory not found.")
         sys.exit(1)
     print(f"Using local directories:\n"
           f"  Training: {local_train_dir}\n"
@@ -220,8 +247,9 @@ with open(local_mapping_path, 'w') as f:
     json.dump(class_to_idx, f)
 print(f"Class mapping saved locally at: {local_mapping_path}")
 
-gcs_mapping_destination = f"{GCS_MODEL_OUTPUT_PATH}/class_mapping.json"
-upload_to_gcs(GCS_BUCKET_NAME, local_mapping_path, gcs_mapping_destination)
+if USE_GCS:
+    gcs_mapping_destination = f"{GCS_MODEL_OUTPUT_PATH}/class_mapping.json"
+    upload_to_gcs(GCS_BUCKET_NAME, local_mapping_path, gcs_mapping_destination)
 
 num_classes = len(train_ds.classes)
 print(f"Found classes: {num_classes} {train_ds.classes}")
@@ -229,15 +257,7 @@ model = build_model(num_classes=num_classes, device=DEVICE)
 
 trained_model = train(model, train_loader, val_loader, EPOCHS, DEVICE)
 
-    # Bereinige den temporären Datenordner am Ende
+# Bereinige den temporären Datenordner am Ende
 print(f"Cleaning up temporary data directory: {LOCAL_DATA_DIR}")
 shutil.rmtree(LOCAL_DATA_DIR)
 print("Cleanup complete.")
-
-# 3. Build model (with the correct number of classes)
-num_classes = len(train_ds.classes)
-print(f"Found classes: {num_classes} {train_ds.classes}")
-model = build_model(num_classes=num_classes, device=DEVICE)
-
-# 4. Start training
-trained_model = train(model, train_loader, val_loader, EPOCHS, DEVICE)
