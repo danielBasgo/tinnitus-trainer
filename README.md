@@ -142,7 +142,7 @@ This project was developed as part of my personal learning journey in data scien
 *   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) where a user can upload an audiogram and see the model's prediction and confidence score.
 
 ---
-=======
+
 1. Follow steps 1 and 3 from Method 1 to clone the repo and place the data.
 2. Prepare the data by running `python prepare_data.py` and `python prepare_new_dataset.py`.
 3. **Build the Docker image:**
@@ -162,7 +162,7 @@ This project was developed as part of my personal learning journey in data scien
 
 ### Optional Bonus Chapter: Scaling to the Cloud
 
-Sometimes the best learning opportunities come from happy accidents. After subscribing to Google Cloud Platform, we turned this project into a professional MLOps workflow by running the training pipeline on scalable cloud infrastructure.
+Sometimes the best learning opportunities come from happy accidents. After subscribing to Google Cloud Platform, I turned this project into a professional MLOps workflow by running the training pipeline on scalable cloud infrastructure.
 
 #### Cloud Training on Vertex AI
 
