@@ -3,4 +3,6 @@ torch
 torchvision
 scikit-learn
 seaborn
-google-cloud-storage
+matplotlib
+Pillow
+# google-cloud-storage  # Optional: Uncomment if you need Google Cloud Storage support
