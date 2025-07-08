@@ -1,23 +1,21 @@
-FROM python:3.11-slim-bullseye
+# Start from a Conda base image which is more suitable for scientific packages
+FROM continuumio/miniconda3:latest
 
-# Install only necessary system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc libffi-dev libssl-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
+# Set the working directory
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy the environment file
+COPY environment.yml .
 
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+# Create the Conda environment from the yml file
+# This command also installs all dependencies
+RUN conda env create -f environment.yml
 
+# Copy the rest of your project code
 COPY . .
 
-# Optionally, run pip-audit to check for Python package vulnerabilities
-# RUN pip install pip-audit && pip-audit
+# Activate the conda environment and set it as the default shell
+SHELL ["conda", "run", "-n", "tinnitus-projekt", "/bin/bash", "-c"]
 
-# Use a non-root user for extra security (optional)
-# RUN useradd -m appuser && chown -R appuser /app
-# USER appuser
+# The command to run when the container starts
+CMD ["python", "train.py"]

@@ -1,8 +1,0 @@
-pandas
-torch
-torchvision
-scikit-learn
-seaborn
-matplotlib
-Pillow
-# google-cloud-storage  # Optional: Uncomment if you need Google Cloud Storage support
