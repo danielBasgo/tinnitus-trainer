@@ -15,4 +15,4 @@ audiogram_dataset/
 new_dataset/
 processed_data/
 models/
-*.png
+confusion_matrix.png

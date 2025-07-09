@@ -12,6 +12,21 @@ A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogra
 
 This project holds a special, personal significance for me. After recently being diagnosed with tinnitus myself, I was motivated to apply my data science skills to better understand the condition and contribute something positive to the space. My goal was to explore whether a deep learning model could be trained to automatically recognize subtle patterns in audiograms.
 
+## Understanding the Data: What is an Audiogram?
+
+Before diving into the model, it's helpful to understand what an audiogram represents. In simple terms, an audiogram is a chart that shows the results of a hearing test. It reveals the softest sounds a person can hear at different pitches or frequencies.
+
+*   **Horizontal Axis (X-axis):** Represents frequency (pitch), from low pitches (like a bass drum) on the left to high pitches (like a whistle) on the right.
+*   **Vertical Axis (Y-axis):** Represents hearing level in decibels (dB), from very soft sounds at the top to very loud sounds at the bottom.
+
+A line near the top of the chart indicates normal hearing. When the line dips downwards, it signifies hearing loss at those specific frequencies. For tinnitus-related hearing loss, it's common to see a sharp drop in the high-frequency range.
+
+**Normal Hearing vs. Tinnitus-Related Hearing Loss**
+
+| Normal Hearing Example | Tinnitus-Related Hearing Loss Example |
+| :--------------------: | :-----------------------------------: |
+| ![An audiogram showing lines for both ears staying consistently high on the chart, indicating normal hearing across all frequencies.](assets/normal_audiogram.png) | ![An audiogram showing lines that are high in the low frequencies but drop sharply in the high-frequency range, a common pattern for tinnitus.](assets/tinnitus_audiogram.png) |
+
 ## Dataset
 
 The project utilizes a combined dataset from two public sources to ensure a robust and varied training set.
@@ -29,6 +44,8 @@ The project utilizes a combined dataset from two public sources to ensure a robu
 After training on the combined dataset, the model achieved an outstanding performance with a **validation accuracy of 93.25%**.
 
 A key insight came from a low-confidence prediction (58.49%) for a borderline audiogram. The model correctly identified conflicting features (normal dB levels vs. a high-frequency slope associated with tinnitus). This taught me that a robust AI model's ability to communicate its own uncertainty is a crucial feature, enabling a "human-in-the-loop" system where ambiguous cases are flagged for expert review.
+
+![An audiogram chart showing hearing levels that are normal in low frequencies but slope down significantly in high frequencies, indicating hearing loss.](assets/borderline_case_audiogram.png)
 
 ## How to Run This Project
 
@@ -86,4 +103,4 @@ This method creates an exact replica of the development environment on your loca
 *   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) that allows users to upload an audiogram and receive a prediction from the model's API.
 
 ---
-*This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject.*
+*This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject. A special thanks to my tutors at DSI for their invaluable feedback and support.*
