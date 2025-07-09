@@ -5,7 +5,8 @@ import random
 
 # --- Configuration ---
 # The path to the root of the new, complex dataset
-NEW_DATA_SOURCE_DIR = "audiogram_dataset/Right Ear Charts/right_ear"
+# NOTE: This script processes one ear at a time from the new dataset.
+NEW_DATA_SOURCE_DIR = "new_dataset/Right ear"
 
 # The destination where your combined, processed data lives
 DEST_DIR = "processed_data"

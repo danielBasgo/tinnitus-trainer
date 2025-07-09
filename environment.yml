@@ -1,0 +1,16 @@
+name: tinnitus-projekt
+channels:
+  - pytorch
+  - conda-forge
+  - defaults # Keep defaults last
+dependencies:
+  - python=3.11
+  - pytorch
+  - torchvision
+  - torchaudio
+  - cpuonly
+  - pandas
+  - seaborn
+  - scikit-learn
+  - matplotlib
+

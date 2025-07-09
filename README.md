@@ -3,9 +3,8 @@
 ![Badge showing Python 3.11 in blue](https://img.shields.io/badge/Python-3.11-blue)
 ![Badge showing PyTorch in bright green](https://img.shields.io/badge/PyTorch-brightgreen)
 ![Badge showing Docker in blue](https://img.shields.io/badge/Docker-blue)
-![Badge showing Google Cloud in blue and white](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
 
-A cloud-native Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images and identify patients at risk of tinnitus. The model is containerized with Docker and trained on **Google Cloud's Vertex AI**, achieving a validation accuracy of **93.25%**.
+A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images and identify patients at risk of tinnitus. The model is containerized with Docker and achieves a validation accuracy of **93.25%**.
 
 ---
 
@@ -18,7 +17,7 @@ This project holds a special, personal significance for me. After recently being
 The project utilizes a combined dataset from two public sources to ensure a robust and varied training set.
 
 *   **Data Source 1:** [Kaggle - Tinnitus Detection](https://www.kaggle.com/code/ashikshahriar/tinnitus-detection/notebook)
-*   **Data Source 2:** [Kaggle - Audiogram Hearing-Loss Classification](https://www.kaggle.com/datasets/debasisdotcom/audiogram-hearing-loss-classification)
+*   **Data Source 2:** [Kaggle - Audiological Data for Hearing Loss Classification](https://www.kaggle.com/datasets/vbookshelf/audiological-data-for-hearing-loss-classification)
 
 **Important Note:** The raw data is **not** included in this GitHub repository to keep its size small. You must download the data manually from the sources linked above to run the project.
 
@@ -51,17 +50,17 @@ This method creates an exact replica of the development environment on your loca
 
 3.  **Download and place the data:**
     *   Download the data from **Data Source 1**. Create a folder named `audiogram_dataset` in the project root and place the `Left Ear Charts` and `Right Ear Charts` folders inside it.
-    *   Download the data from **Data Source 2**. Create a folder named `new_dataset` in the project root and place its contents (e.g., `Left ear`, `Right ear` folders) inside it.
+    *   Download and unzip the data from **Data Source 2**. Create a folder named `new_dataset` in the project root and place the `Left ear` and `Right ear` folders from the unzipped data inside it.
 
     Your final folder structure should look like this:
     ```
     tinnitus-trainer/
     ├── audiogram_dataset/
     │   ├── Left Ear Charts/
-    │   └── Right Ear Charts/
+    │   └── Right Ear Charts/  (from Data Source 1)
     ├── new_dataset/
     │   ├── Left ear/
-    │   └── Right ear/
+    │   └── Right ear/         (from Data Source 2)
     └── ... (other project files like train.py)
     ```
 
@@ -82,15 +81,9 @@ This method creates an exact replica of the development environment on your loca
     python predict.py --image "path/to/your/image.jpg"
     ```
 
-### (Optional) Bonus Chapter: Scaling to the Cloud
-
-> **The Story:** Sometimes, the best learning opportunities come from happy accidents. I unintentionally subscribed to Google Cloud Platform and decided to turn this into a chance to elevate the project from a local script to a professional MLOps workflow. This section documents how to run the entire training pipeline on a powerful cloud infrastructure.
-
-A detailed guide for cloud training can be found in the project's extended documentation or by contacting me. The workflow involves using **Google Cloud Storage** for data, **Artifact Registry** for Docker images, and **Vertex AI** for GPU-powered training jobs.
-
 ## Future Work
-*   **ML Deployment:** Deploy the trained model to a **Vertex AI Endpoint** to make it available as a live API.
-*   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask, hosted on **Cloud Run**) that calls the Vertex AI Endpoint.
+*   **ML Deployment:** Deploy the trained model as a live API endpoint.
+*   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) that allows users to upload an audiogram and receive a prediction from the model's API.
 
 ---
 *This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject.*
