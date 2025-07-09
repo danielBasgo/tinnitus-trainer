@@ -1,15 +1,19 @@
 # predict.py
 # This script is used to predict the class of an image or all images in a directory using a pre-trained model.
 
+import argparse
+import json
+import os
+import glob
+from typing import List, Tuple, Dict, Optional
+
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-import argparse
-import os
-import json
+
 from train import build_model
 
-def get_args():
+def get_args() -> argparse.Namespace:
     """Defines and parses command-line arguments for the predictions script."""
     parser = argparse.ArgumentParser(description="Predict the class of an audiogram image using a trained PyTorch model.")
 
@@ -20,7 +24,7 @@ def get_args():
     parser.add_argument("--model",
                         type=str,
                         default=None,
-                        help="Path to the trained model file. If not provided, the latest model in the 'models/' directory will be used.")
+                        help="Path to the trained model file (*.pt). If not provided, the latest model in the 'models/' directory will be used.")
 
     # Optional argument for the class mapping file
     parser.add_argument("--class_mapping",
@@ -38,22 +42,22 @@ def get_args():
 
     return parser.parse_args()
 
-def find_latest_model(model_dir="models"):
-    """Finds the most recently created model file in a directory."""
-    model_files = [os.path.join(model_dir, f) for f in os.listdir(model_dir) if f.endswith(".pt")]
-    if not model_files:
+def find_latest_model(model_dir: str = "models") -> Optional[str]:
+    """Finds the most recently created model file (*.pt) in a directory."""
+    if not os.path.isdir(model_dir):
         return None
-    # Find the file with the latest creation time
-    latest_model = max(model_files, key=os.path.getctime)
-    return latest_model
+    list_of_files = glob.glob(os.path.join(model_dir, '*.pt'))
+    if not list_of_files:
+        return None
+    return max(list_of_files, key=os.path.getctime)
 
-def predict(image_path, model, transform, class_names, device):
+def predict(image_path: str, model: torch.nn.Module, transform: transforms.Compose, class_names: Dict[int, str], device: torch.device) -> Optional[Tuple[str, float]]:
     """
     Loads an image, transforms it, and returns the model's prediction and confidence.
     """
     try:
         image = Image.open(image_path).convert("RGB")
-    except Exception as e:
+    except (IOError, FileNotFoundError) as e:
         print(f"Error loading image {image_path}: {e}")
         return None, None
 
@@ -67,50 +71,52 @@ def predict(image_path, model, transform, class_names, device):
         confidence = probabilities[predicted.item()].item()
     return predicted_class, confidence
 
-def main(args):
-    """
-    Main function to run the prediction pipeline.
-    """
-    # 1. Set up device
+def load_model_for_inference(args: argparse.Namespace) -> Optional[Tuple[torch.nn.Module, Dict[int, str], torch.device]]:
+    """Handles device setup, model loading, and class mapping."""
     if args.device == "auto":
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     else:
         device = torch.device(args.device)
     print(f"Using device: {device}")
 
-    # 2. Load class mapping
     try:
         with open(args.class_mapping, 'r') as f:
             class_to_idx = json.load(f)
-        # Invert the dictionary to map index to class name
         class_names = {v: k for k, v in class_to_idx.items()}
     except FileNotFoundError:
         print(f"Error: Class mapping file not found at '{args.class_mapping}'")
-        return
+        return None
 
-    # 3. Find and load the model
     model_path = args.model
     if model_path is None or not os.path.isfile(model_path):
-        if model_path is not None:  # If the user provided a path but it wasn't found
+        if model_path is not None:
             print(f"Warning: Model at '{model_path}' not found.")
         print("Searching for the latest model in 'models/' directory...")
         model_path = find_latest_model()
 
         if model_path is None:
             print("Error: No .pt model files found in the 'models/' directory.")
-            return
+            return None
 
     try:
-        # Build the model architecture
+        print(f"Loading model: {os.path.basename(model_path)}")
         model = build_model(num_classes=len(class_names), device=device)
-        # Load the trained weights
         model.load_state_dict(torch.load(model_path, map_location=device))
+        return model, class_names, device
     except FileNotFoundError:
         print(f"Error: Model file not found at '{model_path}'")
-        return
+        return None
     except Exception as e:
         print(f"Error loading the model: {e}")
-        return
+        return None
+
+def main(args: argparse.Namespace):
+    """Main function to run the prediction pipeline."""
+    # 1. Load model, class names, and device
+    load_result = load_model_for_inference(args)
+    if load_result is None:
+        return # Exit if setup failed
+    model, class_names, device = load_result
 
     # 4. Define the same image transformations as in validation
     transform = transforms.Compose([
@@ -119,14 +125,14 @@ def main(args):
         transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
     ])
 
-    # 5. Run prediction(s)
+    # 5. Find image(s) to predict
     image_path = args.image
     if os.path.isfile(image_path):
         # It's a single file
         image_paths = [image_path]
     elif os.path.isdir(image_path):
         # It's a directory, find all images inside
-        print(f"Found a directory. Predicting on all images in: {image_path}")
+        print(f"\nFound a directory. Predicting on all images in: {image_path}")
         image_paths = [os.path.join(image_path, f) for f in os.listdir(image_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
     else:
         print(f"Error: The provided image path is not a valid file or directory: {image_path}")
@@ -136,16 +142,18 @@ def main(args):
         print("No images found to predict.")
         return
 
-    # Loop through all found images
+    # 6. Loop through all found images and predict
+    total_images = len(image_paths)
+    print(f"Found {total_images} image(s) to predict.")
     for single_image_path in image_paths:
         predicted_class, confidence = predict(single_image_path, model, transform, class_names, device)
-        # 6. Print the result for each image
+        # 7. Print the result for each image
         if predicted_class is not None:
             print(f"\n--- Prediction for: {os.path.basename(single_image_path)} ---")
             print(f"  -> Predicted Class: {predicted_class}")
             print(f"  -> Confidence:      {confidence:.2%}")
+    print("\n--- Prediction script finished. ---")
 
 if __name__ == '__main__':
     args = get_args()
     main(args)
-
