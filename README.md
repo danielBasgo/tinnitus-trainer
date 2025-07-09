@@ -25,7 +25,7 @@ A line near the top of the chart indicates normal hearing. When the line dips do
 
 | Normal Hearing Example | Tinnitus-Related Hearing Loss Example |
 | :--------------------: | :-----------------------------------: |
-| ![An audiogram showing lines for both ears staying consistently high on the chart, indicating normal hearing across all frequencies.](assets/N1%20Left.jpg) | ![An audiogram showing lines that are high in the low frequencies but drop sharply in the high-frequency range, a common pattern for tinnitus.](assets/T1%20Right.jpg) |
+| <img src="assets/N1%20Left.jpg" alt="An audiogram showing lines for both ears staying consistently high on the chart, indicating normal hearing across all frequencies." width="400"/> | <img src="assets/T1%20Right.jpg" alt="An audiogram showing lines that are high in the low frequencies but drop sharply in the high-frequency range, a common pattern for tinnitus." width="400"/> |
 
 ## Dataset
 
