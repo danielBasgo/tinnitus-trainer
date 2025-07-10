@@ -25,7 +25,7 @@ A line near the top of the chart indicates normal hearing. When the line dips do
 
 | Normal Hearing Example | Tinnitus-Related Hearing Loss Example |
 | :--------------------: | :-----------------------------------: |
-| ![An audiogram showing lines for both ears staying consistently high on the chart, indicating normal hearing across all frequencies.](assets/N1%20Left.jpg) | ![An audiogram showing lines that are high in the low frequencies but drop sharply in the high-frequency range, a common pattern for tinnitus.](assets/T1%20Right.jpg) |
+| ![An audiogram showing lines for both ears staying consistently high on the chart, indicating normal hearing across all frequencies.](assets/N%201%20Left.jpg) | ![An audiogram showing lines that are high in the low frequencies but drop sharply in the high-frequency range, a common pattern for tinnitus.](assets/T1%20Right.jpg) |
 
 ## Dataset
 
@@ -111,4 +111,4 @@ This project uses TensorBoard to log training and validation metrics like loss a
 *   **ML Deployment:** Deploy the trained model as a live API endpoint.
 *   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) that allows users to upload an audiogram and receive a prediction from the model's API.
 ---
-*This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject. A special thanks to my tutors for their invaluable feedback and support.*
+*This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject. A special thanks to my tutors at DSI for their invaluable feedback and support.*
