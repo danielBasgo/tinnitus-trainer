@@ -16,3 +16,4 @@ new_dataset/
 processed_data/
 models/
 confusion_matrix.png
+runs/

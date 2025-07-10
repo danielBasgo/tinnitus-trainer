@@ -1,4 +1,4 @@
-name: tinnitus-projekt
+name: tinnitus-trainer
 channels:
   - pytorch
   - conda-forge
@@ -13,4 +13,4 @@ dependencies:
   - seaborn
   - scikit-learn
   - matplotlib
-
+  - tensorboard

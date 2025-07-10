@@ -25,8 +25,7 @@ A line near the top of the chart indicates normal hearing. When the line dips do
 
 | Normal Hearing Example | Tinnitus-Related Hearing Loss Example |
 | :--------------------: | :-----------------------------------: |
-| ![An audiogram showing lines for both ears staying consistently high on the chart, indicating normal hearing across all frequencies.](assets/N1%20Left.jpg)
-| ![An audiogram showing lines that are high in the low frequencies but drop sharply in the high-frequency range, a common pattern for tinnitus.](assets/T1%20Right.jpg) |
+| ![An audiogram showing lines for both ears staying consistently high on the chart, indicating normal hearing across all frequencies.](assets/N%201%20Left.jpg) | ![An audiogram showing lines that are high in the low frequencies but drop sharply in the high-frequency range, a common pattern for tinnitus.](assets/T1%20Right.jpg) |
 
 ## Dataset
 
@@ -60,10 +59,10 @@ This method creates an exact replica of the development environment on your loca
     ```
 
 2.  **Create and activate the Conda environment:**
-    The `environment.yml` file contains all necessary dependencies. This command creates and activates an environment named `tinnitus-projekt`.
+    The `environment.yml` file contains all necessary dependencies. This command creates and activates an environment named `tinnitus-trainer`.
     ```bash
     conda env create -f environment.yml
-    conda activate tinnitus-projekt
+    conda activate tinnitus-trainer
     ```
 
 3.  **Download and place the data:**
@@ -83,10 +82,9 @@ This method creates an exact replica of the development environment on your loca
     ```
 
 4.  **Prepare the data:**
-    Run the scripts sequentially to process both datasets into the `processed_data` folder.
+    Run the unified script to process both datasets and create the final `processed_data` folder.
     ```bash
-    python prepare_data.py
-    python prepare_new_dataset.py
+    python prepare_all_data.py
     ```
 
 5.  **Train the model:**
@@ -99,9 +97,18 @@ This method creates an exact replica of the development environment on your loca
     python predict.py --image "path/to/your/image.jpg"
     ```
 
+## Visualizing Training with TensorBoard
+This project uses TensorBoard to log training and validation metrics like loss and accuracy. To visualize the results:
+
+1.  After running `python train.py`, a `runs` directory will be created.
+2.  Run the following command from your project's root directory:
+    ```bash
+    tensorboard --logdir=runs
+    ```
+3.  Open your web browser and navigate to `http://localhost:6006` to see the interactive dashboards for loss and accuracy curves.
+
 ## Future Work
 *   **ML Deployment:** Deploy the trained model as a live API endpoint.
 *   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) that allows users to upload an audiogram and receive a prediction from the model's API.
-
 ---
 *This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject. A special thanks to my tutors at DSI for their invaluable feedback and support.*
