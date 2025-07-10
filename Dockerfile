@@ -15,7 +15,7 @@ RUN conda env create -f environment.yml
 COPY . .
 
 # Activate the conda environment and set it as the default shell
-SHELL ["conda", "run", "-n", "tinnitus-projekt", "/bin/bash", "-c"]
+SHELL ["conda", "run", "-n", "tinnitus-trainer", "/bin/bash", "-c"]
 
 # The command to run when the container starts
 CMD ["python", "train.py"]

@@ -5,6 +5,7 @@ import torch
 from torch import nn, optim
 from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
 import sys
 
@@ -78,7 +79,7 @@ def build_model(num_classes, device):
 # ——————————————————————————————
 # 4) Training Routine
 # ——————————————————————————————
-def train(model, train_loader, val_loader, epochs, device):
+def train(model, train_loader, val_loader, epochs, device, writer):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
     best_val_acc = 0.0
@@ -123,6 +124,12 @@ def train(model, train_loader, val_loader, epochs, device):
         print(f"[ Val ] Epoch {epoch}/{epochs}  "
               f"Loss: {epoch_val_loss:.4f}  Acc: {epoch_val_acc:.2%}")
 
+        # — Log metrics to TensorBoard —
+        writer.add_scalar('Loss/train', epoch_loss, epoch)
+        writer.add_scalar('Accuracy/train', epoch_acc, epoch)
+        writer.add_scalar('Loss/val', epoch_val_loss, epoch)
+        writer.add_scalar('Accuracy/val', epoch_val_acc, epoch)
+
         # — Early Stopping & Saving the best model —
         if epoch_val_acc > best_val_acc:
             best_val_acc = epoch_val_acc
@@ -154,23 +161,33 @@ if __name__ == "__main__":
     print(f"Using device: {DEVICE}")
 
     # 1. Load data
-    train_loader, val_loader, train_ds, val_ds = get_dataloaders(BATCH_SIZE, IMG_SIZE)
-    
+    train_loader, val_loader, train_ds, val_ds = get_dataloaders(BATCH_SIZE, IMG_SIZE)    
     # Ensure that data was found
     if len(train_ds) == 0 or len(val_ds) == 0:
         print("ERROR: No images found in the training or validation directories. Exiting script.")
         sys.exit(1)
 
-# 2. Save class mapping for evaluate.py
-class_to_idx = train_ds.class_to_idx
-mapping_path = os.path.join(MODEL_DIR, "class_mapping.json")
-with open(mapping_path, 'w') as f:
-    json.dump(class_to_idx, f)
-print(f"Class mapping saved at: {mapping_path}")
+    # 2. Setup TensorBoard
+    log_dir = os.path.join("runs", datetime.now().strftime("%Y%m%d-%H%M%S"))
+    writer = SummaryWriter(log_dir)
+    print(f"TensorBoard logs will be saved to: {log_dir}")
 
-num_classes = len(train_ds.classes)
-print(f"Found classes: {num_classes} {train_ds.classes}")
-model = build_model(num_classes=num_classes, device=DEVICE)
+    # 3. Save class mapping for evaluate.py
+    class_to_idx = train_ds.class_to_idx
+    mapping_path = os.path.join(MODEL_DIR, "class_mapping.json")
+    with open(mapping_path, 'w') as f:
+        json.dump(class_to_idx, f)
+    print(f"Class mapping saved at: {mapping_path}")
 
-trained_model = train(model, train_loader, val_loader, EPOCHS, DEVICE)
-print("\n--- Script finished ---")
+    num_classes = len(train_ds.classes)
+    print(f"Found classes: {num_classes} {train_ds.classes}")
+    model = build_model(num_classes=num_classes, device=DEVICE)
+
+    trained_model = train(model, train_loader, val_loader, EPOCHS, DEVICE, writer)
+
+    # 4. Log model graph to TensorBoard and close writer
+    dataiter = iter(val_loader)
+    images, _ = next(dataiter)
+    writer.add_graph(model, images.to(DEVICE))
+    writer.close()
+    print("\n--- Script finished ---")
