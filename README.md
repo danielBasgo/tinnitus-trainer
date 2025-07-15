@@ -32,7 +32,7 @@ A line near the top of the chart indicates normal hearing. When the line dips do
 The project utilizes a combined dataset from two public sources to ensure a robust and varied training set.
 
 *   **Data Source 1:** [Kaggle - Tinnitus Detection](https://www.kaggle.com/code/ashikshahriar/tinnitus-detection/notebook)
-*   **Data Source 2:** [Kaggle - Audiological Data for Hearing Loss Classification](https://www.kaggle.com/datasets/vbookshelf/audiological-data-for-hearing-loss-classification)
+*   **Data Source 2:** [Kaggle - Audiological Data for Hearing Loss Classification](https://www.kaggle.com/datasets/vbookshelf/audiological-data-for-hearing-loss-classification) (Edit: Unfortunately the Link does not lead to the original Data Source. This is currently a Issue we are working on. Please reach out for further information. Much appreciated.)
 
 **Important Note:** The raw data is **not** included in this GitHub repository to keep its size small. You must download the data manually from the sources linked above to run the project.
 
