@@ -40,13 +40,6 @@ The project utilizes a combined dataset from two public sources to ensure a robu
 *   **Model Architecture:** A **ResNet18** model with Transfer Learning, customized with a **Dropout layer (p=0.5)** for regularization.
 *   **Containerization:** The entire application is containerized using **Docker** and a **Conda** environment for full reproducibility.
 
-## Results & Key Insights
-After training on the combined dataset, the model achieved an outstanding performance with a **validation accuracy of 93.25%**.
-
-A key insight came from a low-confidence prediction (58.49%) for a borderline audiogram. The model correctly identified conflicting features (normal dB levels vs. a high-frequency slope associated with tinnitus). This taught me that a robust AI model's ability to communicate its own uncertainty is a crucial feature, enabling a "human-in-the-loop" system where ambiguous cases are flagged for expert review.
-
-![An audiogram chart showing hearing levels that are normal in low frequencies but slope down significantly in high frequencies, indicating hearing loss.](assets/borderline_case_audiogram.png)
-
 ## How to Run This Project
 
 ### Local Training with Conda (Recommended Start)
@@ -67,7 +60,7 @@ This method creates an exact replica of the development environment on your loca
 
 3.  **Download and place the data:**
     *   Download the data from **Data Source 1**. Create a folder named `audiogram_dataset` in the project root and place the `Left Ear Charts` and `Right Ear Charts` folders inside it.
-    *   Download and unzip the data from **Data Source 2**. Create a folder named `new_dataset` in the project root and place the `Left ear` and `Right ear` folders from the unzipped data inside it.
+    *   Download and unzip the data from **Data Source 2**. Create a folder named `new_dataset` in the project root and place the `Mild` and `Moderate` etc. folders from the unzipped data inside it.
 
     Your final folder structure should look like this:
     ```
@@ -77,7 +70,9 @@ This method creates an exact replica of the development environment on your loca
     │   └── Right Ear Charts/  (from Data Source 1)
     ├── new_dataset/
     │   ├──new (from Data Source 2)
-    └── ... (other project files like train.py)
+    │   ├──Mild 
+    │   ├──Moderate 
+    └── ... (other files and folders)
     ```
 
 4.  **Prepare the data:**
@@ -96,15 +91,22 @@ This method creates an exact replica of the development environment on your loca
     python predict.py --image "path/to/your/image.jpg"
     ```
 
-## Visualizing Training with TensorBoard
-This project uses TensorBoard to log training and validation metrics like loss and accuracy. To visualize the results:
+## Results & Key Insights
+After training on the combined dataset, the model achieved an outstanding performance with a **validation accuracy of 93.25%**.
 
-1.  After running `python train.py`, a `runs` directory will be created.
-2.  Run the following command from your project's root directory:
-    ```bash
-    tensorboard --logdir=runs
-    ```
-3.  Open your web browser and navigate to `http://localhost:6006` to see the interactive dashboards for loss and accuracy curves.
+A key insight came from a low-confidence prediction (58.49%) for a borderline audiogram. The model correctly identified conflicting features (normal dB levels vs. a high-frequency slope associated with tinnitus). This taught me that a robust AI model's ability to communicate its own uncertainty is a crucial feature, enabling a "human-in-the-loop" system where ambiguous cases are flagged for expert review.
+
+![An audiogram chart showing hearing levels that are normal in low frequencies but slope down significantly in high frequencies, indicating hearing loss.](assets/borderline_case_audiogram.png)
+
+## Visualizing Training with TensorBoard
+T## 📉 Training Metrics (via TensorBoard)
+
+The training process was tracked using [TensorBoard](https://www.tensorflow.org/tensorboard), which provides visual insights into the model's learning behavior. Below are the smoothed training and validation metrics over 10 epochs.
+
+| Accuracy | Loss |
+|----------|------|
+| ![Training Accuracy](assets/tensorboard_accuracy.png) | ![Training Loss](assets/tensorboard_loss.png) |
+
 
 ## Future Work
 *   **ML Deployment:** Deploy the trained model as a live API endpoint.

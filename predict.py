@@ -1,4 +1,3 @@
-# predict.py
 # This script is used to predict the class of an image or all images in a directory using a pre-trained model.
 
 import argparse
