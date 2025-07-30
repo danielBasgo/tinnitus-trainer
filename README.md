@@ -4,7 +4,7 @@
 ![Badge showing PyTorch in bright green](https://img.shields.io/badge/PyTorch-brightgreen)
 ![Badge showing Docker in blue](https://img.shields.io/badge/Docker-blue)
 
-A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images and identify patients at risk of tinnitus. The model is containerized with Docker and achieves a validation accuracy of **93.25%**.
+A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images as either showing normal hearing or indicating a risk of tinnitus. The model is containerized with Docker and achieves a validation accuracy of **95.66%**.
 
 ---
 
@@ -29,16 +29,19 @@ A line near the top of the chart indicates normal hearing. When the line dips do
 
 ## Dataset
 
-The project utilizes a combined dataset from two public sources to ensure a robust and varied training set.
+The model was trained on a combined dataset derived from:
 
-*   **Data Source 1:** [Kaggle - Tinnitus Detection](https://www.kaggle.com/code/ashikshahriar/tinnitus-detection/notebook)
-*   **Data Source 2:** [Kaggle - Audiological Data for Hearing Loss Classification](https://www.kaggle.com/datasets/danielasgo/audiogramm-data-for-hearing-loss-classification/data) (Edit: Unfortunately the original Link does not lead to the original Data Source. This data ahs been reuploaded. The original creator will be credited ASAP.)
+- [Kaggle - Tinnitus Detection Notebook](https://www.kaggle.com/code/ashikshahriar/tinnitus-detection/notebook)
+- [Kaggle - Audiological Data](https://www.kaggle.com/datasets/danielasgo/audiogramm-data-for-hearing-loss-classification/data)
 
 **Important Note:** The raw data is **not** included in this GitHub repository to keep its size small. You must download the data manually from the sources linked above to run the project.
 
 ## Core Methodology
-*   **Model Architecture:** A **ResNet18** model with Transfer Learning, customized with a **Dropout layer (p=0.5)** for regularization.
-*   **Containerization:** The entire application is containerized using **Docker** and a **Conda** environment for full reproducibility.
+- **Architecture:** ResNet18 with transfer learning
+- **Classes:** `normal` and `tinnitus` (binary classification)
+- **Regularization:** Dropout (p=0.5)
+- **Environment:** Reproducible via Conda and Docker
+- **Logging:** TensorBoard used to monitor training metrics
 
 ## How to Run This Project
 
@@ -86,10 +89,19 @@ This method creates an exact replica of the development environment on your loca
     python train.py
     ```
 
-6.  **Make a prediction:**
+6.  **Make a prediction on a new audiogram:**
+
+After training, you can classify new images:
     ```bash
     python predict.py --image "path/to/your/image.jpg"
     ```
+
+#### Example Output:
+```
+--- Prediction for: audiogram1.jpg ---
+  -> Predicted Class: tinnitus
+  -> Confidence:      58.49%
+```
 
 ## Results & Key Insights
 After training on the combined dataset, the model achieved an outstanding performance with a **validation accuracy of 93.25%**.
@@ -99,13 +111,23 @@ A key insight came from a low-confidence prediction (58.49%) for a borderline au
 ![An audiogram chart showing hearing levels that are normal in low frequencies but slope down significantly in high frequencies, indicating hearing loss.](assets/borderline_case_audiogram.png)
 
 ## Visualizing Training with TensorBoard
-T## 📉 Training Metrics (via TensorBoard)
+
+```bash
+tensorboard --logdir=runs
+```
+Open [http://localhost:6006](http://localhost:6006) in your browser.
+
+---
+
+📉 Training Metrics (via TensorBoard)
 
 The training process was tracked using [TensorBoard](https://www.tensorflow.org/tensorboard), which provides visual insights into the model's learning behavior. Below are the smoothed training and validation metrics over 10 epochs.
 
 | Accuracy | Loss |
 |----------|------|
 | ![Training Accuracy](assets/tensorboard_accuracy.png) | ![Training Loss](assets/tensorboard_loss.png) |
+
+The model shows a steady improvement in both training and validation accuracy, reaching ~94.8% on the validation set. Loss curves demonstrate consistent convergence without overfitting, which indicates that the regularization (dropout) and data augmentation strategies were effective.
 
 
 ## Future Work
