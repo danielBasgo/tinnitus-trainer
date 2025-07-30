@@ -4,7 +4,7 @@
 ![Badge showing PyTorch in bright green](https://img.shields.io/badge/PyTorch-brightgreen)
 ![Badge showing Docker in blue](https://img.shields.io/badge/Docker-blue)
 
-A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images as either showing normal hearing or indicating a risk of tinnitus. The model is containerized with Docker and achieves a validation accuracy of **95.66%**.
+A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images as either showing normal hearing or indicating a risk of tinnitus. The model is containerized with Docker and achieves a validation accuracy of **94.58%**.
 
 ---
 
@@ -104,7 +104,7 @@ After training, you can classify new images:
 ```
 
 ## Results & Key Insights
-After training on the combined dataset, the model achieved an outstanding performance with a **validation accuracy of 93.25%**.
+After training on the combined dataset, the model achieved an outstanding performance with a **validation accuracy of 94.58%**.
 
 A key insight came from a low-confidence prediction (58.49%) for a borderline audiogram. The model correctly identified conflicting features (normal dB levels vs. a high-frequency slope associated with tinnitus). This taught me that a robust AI model's ability to communicate its own uncertainty is a crucial feature, enabling a "human-in-the-loop" system where ambiguous cases are flagged for expert review.
 
@@ -127,7 +127,7 @@ The training process was tracked using [TensorBoard](https://www.tensorflow.org/
 |----------|------|
 | ![Training Accuracy](assets/tensorboard_accuracy.png) | ![Training Loss](assets/tensorboard_loss.png) |
 
-The model shows a steady improvement in both training and validation accuracy, reaching ~94.8% on the validation set. Loss curves demonstrate consistent convergence without overfitting, which indicates that the regularization (dropout) and data augmentation strategies were effective.
+The model shows a steady improvement in both training and validation accuracy, reaching ~94.58% on the validation set. Loss curves demonstrate consistent convergence without overfitting, which indicates that the regularization (dropout) and data augmentation strategies were effective.
 
 
 ## Future Work
