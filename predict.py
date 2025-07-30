@@ -59,7 +59,7 @@ def predict(image_path: str, model: torch.nn.Module, transform: transforms.Compo
         image = Image.open(image_path).convert("RGB")
     except (IOError, FileNotFoundError) as e:
         print(f"Error loading image {image_path}: {e}")
-        return None, None
+        return None
 
     input_tensor = transform(image).unsqueeze(0).to(device)
     model.eval()
