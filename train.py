@@ -67,13 +67,17 @@ def build_model(num_classes, device):
     model = models.resnet18(weights="DEFAULT")
     in_features = model.fc.in_features
     
-    # Replace the last layer with a sequence
-    model.fc = nn.Sequential(
-        nn.Linear(in_features, 256),  # An additional layer
-        nn.ReLU(),                    # Activation function
-        nn.Dropout(0.5),              # DROPOUT: 50% of neurons are randomly deactivated
-        nn.Linear(256, num_classes)   # The final output layer (dynamic)
+    # Replace the last layer (the "fully connected" layer).
+    # NOTE: Statically, model.fc is type-hinted as nn.Linear. We are replacing it
+    # with an nn.Sequential block, which is valid at runtime but flags a type error.
+    # We use `# type: ignore` to tell the type checker that this is intentional.
+    classifier = nn.Sequential(
+        nn.Linear(in_features, 256),
+        nn.ReLU(),
+        nn.Dropout(0.5),
+        nn.Linear(256, num_classes)
     )
+    model.fc = classifier  # type: ignore
     return model.to(device)
 
 # ——————————————————————————————

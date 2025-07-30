@@ -61,7 +61,11 @@ def predict(image_path: str, model: torch.nn.Module, transform: transforms.Compo
         print(f"Error loading image {image_path}: {e}")
         return None
 
-    input_tensor = transform(image).unsqueeze(0).to(device)
+    # The transform pipeline converts the PIL Image to a PyTorch Tensor.
+    # A static type checker cannot infer this change, so it incorrectly flags
+    # the `unsqueeze` call as an error. We use `type: ignore` to acknowledge this.
+    tensor_image = transform(image)
+    input_tensor = tensor_image.unsqueeze(0).to(device)  # type: ignore[attr-defined]
     model.eval()
     with torch.no_grad():
         output = model(input_tensor)
@@ -146,12 +150,17 @@ def main(args: argparse.Namespace):
     total_images = len(image_paths)
     print(f"Found {total_images} image(s) to predict.")
     for single_image_path in image_paths:
-        predicted_class, confidence = predict(single_image_path, model, transform, class_names, device)
+        # The predict function can return None if the image fails to load.
+        # We must check for this before unpacking the result to avoid a TypeError.
+        prediction_result = predict(single_image_path, model, transform, class_names, device)
+
         # 7. Print the result for each image
-        if predicted_class is not None:
+        if prediction_result is not None:
+            predicted_class, confidence = prediction_result
             print(f"\n--- Prediction for: {os.path.basename(single_image_path)} ---")
             print(f"  -> Predicted Class: {predicted_class}")
             print(f"  -> Confidence:      {confidence:.2%}")
+        # If prediction_result is None, an error was already printed inside predict(), so we just continue.
     print("\n--- Prediction script finished. ---")
 
 if __name__ == '__main__':

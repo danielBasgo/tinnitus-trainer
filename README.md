@@ -32,7 +32,7 @@ A line near the top of the chart indicates normal hearing. When the line dips do
 The project utilizes a combined dataset from two public sources to ensure a robust and varied training set.
 
 *   **Data Source 1:** [Kaggle - Tinnitus Detection](https://www.kaggle.com/code/ashikshahriar/tinnitus-detection/notebook)
-*   **Data Source 2:** [Kaggle - Audiological Data for Hearing Loss Classification](https://www.kaggle.com/datasets/vbookshelf/audiological-data-for-hearing-loss-classification) (Edit: Unfortunately the Link does not lead to the original Data Source. This is currently a Issue we are working on. Please reach out for further information. Much appreciated.)
+*   **Data Source 2:** [Kaggle - Audiological Data for Hearing Loss Classification](https://www.kaggle.com/datasets/danielasgo/audiogramm-data-for-hearing-loss-classification/data) (Edit: Unfortunately the original Link does not lead to the original Data Source. This data ahs been reuploaded. The original creator will be credited ASAP.)
 
 **Important Note:** The raw data is **not** included in this GitHub repository to keep its size small. You must download the data manually from the sources linked above to run the project.
 
@@ -76,13 +76,12 @@ This method creates an exact replica of the development environment on your loca
     │   ├── Left Ear Charts/
     │   └── Right Ear Charts/  (from Data Source 1)
     ├── new_dataset/
-    │   ├── Left ear/
-    │   └── Right ear/         (from Data Source 2)
+    │   ├──new (from Data Source 2)
     └── ... (other project files like train.py)
     ```
 
 4.  **Prepare the data:**
-    Run the unified script to process both datasets and create the final `processed_data` folder.
+    Run the script 'prepare_all_data.py' to process both datasets and create the final `processed_data` folder.
     ```bash
     python prepare_all_data.py
     ```

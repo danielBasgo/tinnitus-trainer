@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 DATASET_1_SOURCES = ["audiogram_dataset/Left Ear Charts", "audiogram_dataset/Right Ear Charts"]
 
 # Source folders for the second dataset (labels from parent directory)
-DATASET_2_SOURCES = ["new_dataset/Left ear", "new_dataset/Right ear"]
+DATASET_2_SOURCES = ["new_dataset/new"]
 
 # Mapping for the second dataset's folder names to our target classes
 DATASET_2_MAPPING = {
