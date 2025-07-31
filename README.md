@@ -87,7 +87,7 @@ This method creates an exact replica of the development environment on your loca
     ```
 
 4.  **Prepare the data:**
-    Run the script 'prepare_all_data.py' to process both datasets and create the final `processed_data` folder. The `prepare_data.py` script processes this raw data, splits it into a training set (80%) and a validation set (20%), and organizes it into a directory structure suitable for PyTorch's `ImageFolder`.
+    Run the script 'prepare_all_data.py' to process both datasets and create the final `processed_data` folder. The `prepare_all_data.py` script processes this raw data, splits it into a training set (80%) and a validation set (20%), and organizes it into a directory structure suitable for PyTorch's `ImageFolder`.
     ```bash
     python prepare_all_data.py
     ```
