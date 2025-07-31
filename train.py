@@ -150,8 +150,12 @@ def train(model, train_loader, val_loader, epochs, device, writer):
     print("\n--- Training complete ---")
     if best_model_path:
         print(f"Best model was saved with an accuracy of {best_val_acc:.2%}.")
-
-        # Load the state of the best model to return it
+        # Create a stable path for the best model for easy access by other scripts
+        stable_best_model_path = os.path.join(MODEL_DIR, "best_model.pt")
+        shutil.copy(best_model_path, stable_best_model_path)
+        print(f"Copied best model to '{stable_best_model_path}' for easy access.")
+        
+        # Load the state of the best model to return it (optional, but good practice)
         model.load_state_dict(torch.load(best_model_path))
     else:
         print("No model was saved as no improvement was achieved.")

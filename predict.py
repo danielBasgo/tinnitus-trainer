@@ -5,7 +5,6 @@ import json
 import os
 import glob
 from typing import List, Tuple, Dict, Optional
-
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
@@ -42,13 +41,17 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def find_latest_model(model_dir: str = "models") -> Optional[str]:
-    """Finds the most recently created model file (*.pt) in a directory."""
+    """
+    Finds the best model. Prefers 'best_model.pt', otherwise falls back
+    to the most recently created model file (*.pt) in a directory.
+    """
     if not os.path.isdir(model_dir):
         return None
+    best_model_path = os.path.join(model_dir, 'best_model.pt')
+    if os.path.exists(best_model_path):
+        return best_model_path
     list_of_files = glob.glob(os.path.join(model_dir, '*.pt'))
-    if not list_of_files:
-        return None
-    return max(list_of_files, key=os.path.getctime)
+    return max(list_of_files, key=os.path.getctime) if list_of_files else None
 
 def predict(image_path: str, model: torch.nn.Module, transform: transforms.Compose, class_names: Dict[int, str], device: torch.device) -> Optional[Tuple[str, float]]:
     """

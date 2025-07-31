@@ -10,7 +10,11 @@ A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogra
 
 ## Motivation & Problem Statement
 
-This project holds a special, personal significance for me. After recently being diagnosed with tinnitus myself, I was motivated to apply my data science skills to better understand the condition and contribute something positive to the space. My goal was to explore whether a deep learning model could be trained to automatically recognize subtle patterns in audiograms.
+This project holds a special, personal significance for me. After recently being diagnosed with tinnitus myself, I was motivated to apply my data science skills to better understand the condition and contribute something positive to the space. 
+
+Tinnitus is a widespread auditory condition that affects the quality of life for millions of people. Early and accurate diagnosis is crucial but can be challenging. Audiograms, which are visual representations of a person's hearing ability, often contain subtle patterns that can indicate a risk of tinnitus.
+
+My goal was to explore whether a deep learning model could be trained to automatically recognize these patterns. In doing so, I aimed not only to deepen my own knowledge but also to create a tool that could potentially assist medical professionals in diagnosis and help raise awareness of this condition.
 
 ## Understanding the Data: What is an Audiogram?
 
@@ -29,10 +33,14 @@ A line near the top of the chart indicates normal hearing. When the line dips do
 
 ## Dataset
 
-The model was trained on a combined dataset derived from:
+The dataset for this project was sourced from the "Tinnitus Detection" notebook on Kaggle. Thank you to Ashik Shahriar for making this data available.
 
 - [Kaggle - Tinnitus Detection Notebook](https://www.kaggle.com/code/ashikshahriar/tinnitus-detection/notebook)
 - [Kaggle - Audiological Data](https://www.kaggle.com/datasets/danielasgo/audiogramm-data-for-hearing-loss-classification/data)
+
+The dataset consists of **1018 audiogram images**. The raw data is organized into `Right Ear Charts` and `Left Ear Charts` folders. Each image is labeled by a prefix in its filename:
+*   `N... .jpg`: Normal hearing
+*   `T... .jpg`: Tinnitus diagnosed
 
 **Important Note:** The raw data is **not** included in this GitHub repository to keep its size small. You must download the data manually from the sources linked above to run the project.
 
@@ -79,7 +87,7 @@ This method creates an exact replica of the development environment on your loca
     ```
 
 4.  **Prepare the data:**
-    Run the script 'prepare_all_data.py' to process both datasets and create the final `processed_data` folder.
+    Run the script 'prepare_all_data.py' to process both datasets and create the final `processed_data` folder. The `prepare_data.py` script processes this raw data, splits it into a training set (80%) and a validation set (20%), and organizes it into a directory structure suitable for PyTorch's `ImageFolder`.
     ```bash
     python prepare_all_data.py
     ```
@@ -129,9 +137,37 @@ The training process was tracked using [TensorBoard](https://www.tensorflow.org/
 
 The model shows a steady improvement in both training and validation accuracy, reaching ~94.58% on the validation set. Loss curves demonstrate consistent convergence without overfitting, which indicates that the regularization (dropout) and data augmentation strategies were effective.
 
+## Docker Containerization
+
+This project includes a Dockerfile based on the continuumio/miniconda3:latest image to provide a consistent, scientifically optimized environment. First, build the Docker image:
+
+```bash
+
+$ docker build -t tinnitus-trainer:latest .
+```
+Next, run a container and mount your audiogram dataset and any output directories:
+
+```bash
+$ docker run --rm \
+  -v $(pwd)/audiogram_dataset:/app/audiogram_dataset \
+  -v $(pwd)/new_dataset:/app/new_dataset \
+  tinnitus-trainer:latest \
+  python train.py
+```
+For inference with the trained model:
+```bash
+$ docker run --rm \
+  -v $(pwd)/path/to/your/image.jpg:/app/image.jpg \
+  tinnitus-trainer:latest \
+  python predict.py --image "/app/image.jpg"
+```
+
+All dependencies are encapsulated within the container, ensuring reproducibility on any system with Docker installed.
 
 ## Future Work
 *   **ML Deployment:** Deploy the trained model as a live API endpoint.
-*   **Web App:** Create a simple web interface (e.g., using Streamlit or Flask) that allows users to upload an audiogram and receive a prediction from the model's API.
+*   ~~**Web App:** Create a simple web interface (e.g., using Streamlit or Flask) that allows users to upload an audiogram and receive a prediction from the model's API.~~ credit to Vivienne
+*   ~~**mySQL Database concept:** Build a Database in mySQL~~ credit to Janik
+
 ---
-*This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject. A special thanks to my tutors at DSI for their invaluable feedback and support.*
+*This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject. A special thanks to my Teammates Vivienne and Janik (DanJanViv) for adding essential Features to this Project. And of course the tutors at DSI for their invaluable feedback and support.*

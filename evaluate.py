@@ -22,12 +22,16 @@ DEVICE          = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 OUTPUT_FILENAME = "confusion_matrix.png" # Filename for the saved plot
 
 def find_latest_model(model_dir):
-    """Finds the most recently created model file in the directory."""
+    """
+    Finds the best model. Prefers 'best_model.pt', otherwise falls back
+    to the most recently created model file in the directory.
+    """
+    best_model_path = os.path.join(model_dir, 'best_model.pt')
+    if os.path.exists(best_model_path):
+        return best_model_path
+        
     list_of_files = glob.glob(os.path.join(model_dir, '*.pt'))
-    if not list_of_files:
-        return None
-    latest_file = max(list_of_files, key=os.path.getctime)
-    return latest_file
+    return max(list_of_files, key=os.path.getctime) if list_of_files else None
 
 # ——————————————————————————————
 # 2) Model and Data Setup
