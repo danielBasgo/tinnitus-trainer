@@ -127,7 +127,7 @@ Open [http://localhost:6006](http://localhost:6006) in your browser.
 
 ---
 
-📉 Training Metrics (via TensorBoard)
+## Training Metrics (via TensorBoard)
 
 The training process was tracked using [TensorBoard](https://www.tensorflow.org/tensorboard), which provides visual insights into the model's learning behavior. Below are the smoothed training and validation metrics over 10 epochs.
 
