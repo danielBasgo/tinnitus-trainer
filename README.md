@@ -99,10 +99,10 @@ This method creates an exact replica of the development environment on your loca
 
 6.  **Make a prediction on a new audiogram:**
 
-After training, you can classify new images:
-    ```bash
+**After training, you can classify new images:**
+```bash
     python predict.py --image "path/to/your/image.jpg"
-    ```
+```
 
 #### Example Output:
 ```
