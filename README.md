@@ -4,7 +4,7 @@
 ![Badge showing PyTorch in bright green](https://img.shields.io/badge/PyTorch-brightgreen)
 ![Badge showing Docker in blue](https://img.shields.io/badge/Docker-blue)
 
-A Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images as either showing normal hearing or indicating a risk of tinnitus. The model is containerized with Docker and achieves a validation accuracy of **94.58%**.
+This repository lays the foundation for a larger vision: a human-centered, digitally supported healthcare ecosystem. We’re exploring how patients can take a more active role in their own healing process – while medical professionals regain time and clarity for what truly matters. This Project consists of a Convolutional Neural Network (CNN) developed with PyTorch to classify audiogram images as either showing normal hearing or indicating a risk of tinnitus. The model is containerized with Docker and achieves a validation accuracy of **94.58%**.
 
 ---
 
