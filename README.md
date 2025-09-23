@@ -166,8 +166,8 @@ All dependencies are encapsulated within the container, ensuring reproducibility
 
 ## Future Work
 *   **ML Deployment:** Deploy the trained model as a live API endpoint.
-*   ~~**Web App:** Create a simple web interface (e.g., using Streamlit or Flask) that allows users to upload an audiogram and receive a prediction from the model's API.~~ credit to Vivienne
-*   ~~**mySQL Database concept:** Build a Database in mySQL~~ credit to Janik
+*   ~~**Web App:** Create a simple web interface (e.g., using Streamlit or Flask) that allows users to upload an audiogram and receive a prediction from the model's API.~~ credit to Vivienne for building a first MVP. 
+*   ~~**mySQL Database concept:** Build a Database in mySQL~~ credit to Janik of Team DanJanViv
 
 ---
 *This project was developed as part of my personal learning journey in data science and is motivated by my own experiences with the subject. A special thanks to my Teammates Vivienne and Janik (DanJanViv) for adding essential Features to this Project. And of course the tutors at DSI for their invaluable feedback and support.*
