@@ -83,6 +83,14 @@ This method creates an exact replica of the development environment on your loca
     │   ├──new (from Data Source 2)
     │   ├──Mild 
     │   ├──Moderate 
+    ├── audiogram_dataset/      (from Data Source 1)
+    │   ├── Left Ear Charts/ 
+    │   └── Right Ear Charts/
+    ├── new_dataset/            (from Data Source 2)
+    │   └── new/
+    │       ├── normal/
+    │       ├── mild/
+    │       └── ... (moderate, severe, etc.)
     └── ... (other files and folders)
     ```
 

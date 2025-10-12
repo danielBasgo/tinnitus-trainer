@@ -7,6 +7,10 @@ from torchvision import datasets, transforms, models
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from datetime import datetime
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.exceptions import ConvergenceWarning
+import warnings
 import sys
 
 # ——————————————————————————————
@@ -79,6 +83,43 @@ def build_model(num_classes, device):
     )
     model.fc = classifier  # type: ignore
     return model.to(device)
+
+# ——————————————————————————————
+# 3.5) Feature Extraction Function
+# ——————————————————————————————
+def extract_features(model, dataloader, target_layer_name, device):
+    """
+    Extracts features from a specified intermediate layer of a model.
+    Uses a forward hook to capture the layer's output.
+    """
+    features_list = []
+    labels_list = []
+    
+    # This hook function will be called when the target layer executes its forward pass
+    def get_features_hook(module, input, output):
+        # The output is a tensor; we flatten it, detach from the graph, and move to CPU
+        features_list.append(output.detach().view(output.size(0), -1).cpu().numpy())
+
+    # Find the target layer by name and register the hook
+    target_layer = dict(model.named_modules()).get(target_layer_name)
+    if target_layer is None:
+        raise ValueError(f"Layer '{target_layer_name}' not found in model.")
+    
+    handle = target_layer.register_forward_hook(get_features_hook)
+
+    model.eval()
+    with torch.no_grad():
+        for inputs, labels in dataloader:
+            inputs = inputs.to(device)
+            model(inputs)  # Forward pass to trigger the hook
+            labels_list.append(labels.cpu().numpy())
+
+    handle.remove()  # Important: remove the hook after use
+
+    # Concatenate features and labels from all batches
+    features = np.concatenate(features_list, axis=0)
+    labels = np.concatenate(labels_list, axis=0)
+    return features, labels
 
 # ——————————————————————————————
 # 4) Training Routine
@@ -165,37 +206,56 @@ def train(model, train_loader, val_loader, epochs, device, writer):
 # ——————————————————————————————
 # 5) Main Script
 # ——————————————————————————————
-if __name__ == "__main__":
-    print(f"Using device: {DEVICE}")
+def run_feature_selection_demo():
+    """Demonstrates multi-stage feature selection."""
+    print("--- Running Multi-Stage Feature Selection Demonstration ---")
+    print(f"Using device: {DEVICE}\n")
 
-    # 1. Load data
-    train_loader, val_loader, train_ds, val_ds = get_dataloaders(BATCH_SIZE, IMG_SIZE)    
-    # Ensure that data was found
-    if len(train_ds) == 0 or len(val_ds) == 0:
-        print("ERROR: No images found in the training or validation directories. Exiting script.")
+    # 1. Load data (no augmentation needed for feature extraction)
+    val_transform = transforms.Compose([
+        transforms.Resize((IMG_SIZE, IMG_SIZE)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
+    ])
+    train_ds = datasets.ImageFolder(TRAIN_DIR, transform=val_transform)
+    val_ds = datasets.ImageFolder(VAL_DIR, transform=val_transform)
+    
+    if not train_ds or not val_ds:
+        print("ERROR: No images found. Please run 'prepare_all_data.py'.", file=sys.stderr)
         sys.exit(1)
 
-    # 2. Setup TensorBoard
-    log_dir = os.path.join("runs", datetime.now().strftime("%Y%m%d-%H%M%S"))
-    writer = SummaryWriter(log_dir)
-    print(f"TensorBoard logs will be saved to: {log_dir}")
+    train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=False)
+    val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False)
 
-    # 3. Save class mapping for evaluate.py
-    class_to_idx = train_ds.class_to_idx
-    mapping_path = os.path.join(MODEL_DIR, "class_mapping.json")
-    with open(mapping_path, 'w') as f:
-        json.dump(class_to_idx, f)
-    print(f"Class mapping saved at: {mapping_path}")
+    # 2. Load a pre-trained ResNet18 model
+    model = models.resnet18(weights="DEFAULT").to(DEVICE)
 
-    num_classes = len(train_ds.classes)
-    print(f"Found classes: {num_classes} {train_ds.classes}")
-    model = build_model(num_classes=num_classes, device=DEVICE)
+    # 3. Define stages (layers) for feature extraction
+    # 'layer3': Mid-level features
+    # 'avgpool': High-level features just before the final classification layer
+    feature_stages = ['layer3', 'avgpool']
+    print(f"Will extract features from stages: {feature_stages}\n")
 
-    trained_model = train(model, train_loader, val_loader, EPOCHS, DEVICE, writer)
+    # Suppress convergence warnings for cleaner output
+    warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-    # 4. Log model graph to TensorBoard and close writer
-    dataiter = iter(val_loader)
-    images, _ = next(dataiter)
-    writer.add_graph(model, images.to(DEVICE))
-    writer.close()
-    print("\n--- Script finished ---")
+    # 4. Loop through stages, extract features, and train a simple classifier
+    for stage in feature_stages:
+        print(f"--- Evaluating STAGE: '{stage}' ---")
+        
+        print("Extracting training features...")
+        X_train, y_train = extract_features(model, train_loader, stage, DEVICE)
+        print("Extracting validation features...")
+        X_val, y_val = extract_features(model, val_loader, stage, DEVICE)
+        print(f"Feature vector shape for this stage: {X_train.shape}")
+
+        classifier = LogisticRegression(max_iter=1000, random_state=42)
+        classifier.fit(X_train, y_train)
+        accuracy = classifier.score(X_val, y_val)
+        print(f"--> Validation Accuracy using features from '{stage}': {accuracy:.2%}\n")
+
+    print("--- Demonstration finished ---")
+    print("Compare the validation accuracies to see which 'stage' provides more discriminative features.")
+
+if __name__ == "__main__":
+    run_feature_selection_demo()
